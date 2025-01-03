@@ -1,8 +1,7 @@
 name: symbolic
-description: "Symbolic mathematics library for Dart."
-version: 0.0.2
+description: "Symbolic mathematics library for Dart and Flutter. Algebra, calculus, etc."
+version: 0.0.3
 homepage: https://github.com/Sub6Resources/symbolic
-issue_tracker: https://github.com/Sub6Resources/symbolic/issues
 
 environment:
   sdk: ^3.6.0
@@ -10,4 +9,4 @@ environment:
 dependencies:
 
 dev_dependencies:
-  flutter_lints: ^5.0.0
+  lints: ^5.1.1
