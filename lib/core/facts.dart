@@ -2,15 +2,15 @@ import 'package:symbolic/core/logic.dart';
 import 'package:symbolic/utils/default_map.dart';
 
 Logic _baseFact(Logic atom) {
-  if(atom is Not) {
+  if (atom is Not) {
     return atom.arg;
-  } else{
+  } else {
     return atom;
   }
 }
 
 (Logic, bool) _asPair(Logic atom) {
-  if(atom is Not) {
+  if (atom is Not) {
     return (atom.arg, false);
   } else {
     return (atom, true);
@@ -23,13 +23,15 @@ Logic _baseFact(Logic atom) {
 /// http://www.cs.hope.edu/~cusack/Notes/Notes/DiscreteMath/Warshall.pdf.
 Set<(Logic, Logic)> transitiveClosure(List<(Logic, Logic)> implications) {
   final Set<(Logic, Logic)> fullImplications = implications.toSet();
-  final literals = fullImplications.map((i) => <Logic>{i.$1, i.$2}).fold(<dynamic>{}, (s, e) => s.union(e));
+  final literals = fullImplications
+      .map((i) => <Logic>{i.$1, i.$2})
+      .fold(<dynamic>{}, (s, e) => s.union(e));
 
-  for(final k in literals) {
-    for(final i in literals) {
-      if(fullImplications.contains((i, k))) {
-        for(final j in literals) {
-          if(fullImplications.contains((k, j))) {
+  for (final k in literals) {
+    for (final i in literals) {
+      if (fullImplications.contains((i, k))) {
+        for (final j in literals) {
+          if (fullImplications.contains((k, j))) {
             fullImplications.add((i, j));
           }
         }
@@ -57,16 +59,19 @@ Set<(Logic, Logic)> transitiveClosure(List<(Logic, Logic)> implications) {
 ///
 /// implications: [] of (a,b)
 /// return:       {} of a -> set([b, c, ...])
-DefaultMap<Logic, Set<Logic>> deduceAlphaImplications(List<(Logic, Logic)> implications) {
-  implications += [for(final (i, j) in implications) (Not.create(j), Not.create(i))];
+DefaultMap<Logic, Set<Logic>> deduceAlphaImplications(
+    List<(Logic, Logic)> implications) {
+  implications += [
+    for (final (i, j) in implications) (Not.create(j), Not.create(i))
+  ];
   final res = DefaultMap<Logic, Set<Logic>>(() => <Logic>{});
   final fullImplications = transitiveClosure(implications);
-  for(final (a, b) in fullImplications) {
-    if(a == b) {
-      continue;    // skip a->a cyclic input
+  for (final (a, b) in fullImplications) {
+    if (a == b) {
+      continue; // skip a->a cyclic input
     }
 
-    if(!res.containsKey(a)) {
+    if (!res.containsKey(a)) {
       res[a] = <Logic>{};
     }
     res[a].add(b);
@@ -77,7 +82,7 @@ DefaultMap<Logic, Set<Logic>> deduceAlphaImplications(List<(Logic, Logic)> impli
     final (a, impl) = (entry.key, entry.value);
     impl.remove(a);
     final na = Not.create(a);
-    if(impl.contains(na)) {
+    if (impl.contains(na)) {
       throw ArgumentError(
         "implications are inconsistent: $a -> $na $impl",
       );
@@ -103,14 +108,16 @@ DefaultMap<Logic, Set<Logic>> deduceAlphaImplications(List<(Logic, Logic)> impli
 ///
 /// then we'll extend a's rule to the following
 /// a -> [b, !c, d, e]
-Map<Logic, (Set<Logic>, List<int>)> applyBetaToAlphaRoute(DefaultMap<Logic, Set<Logic>> alphaImplications, List<(Logic, Logic)> betaRules) {
+Map<Logic, (Set<Logic>, List<int>)> applyBetaToAlphaRoute(
+    DefaultMap<Logic, Set<Logic>> alphaImplications,
+    List<(Logic, Logic)> betaRules) {
   final Map<Logic, (Set<Logic>, List<int>)> xImpl = {};
   for (final x in alphaImplications.keys) {
     xImpl[x] = (alphaImplications[x].toSet(), <int>[]);
   }
   for (final (bCond, _) in betaRules) {
     for (final bk in bCond.args) {
-      if(xImpl.containsKey(bk)) {
+      if (xImpl.containsKey(bk)) {
         continue;
       }
       xImpl[bk] = (<Logic>{}, <int>[]);
@@ -120,11 +127,11 @@ Map<Logic, (Set<Logic>, List<int>)> applyBetaToAlphaRoute(DefaultMap<Logic, Set<
   // static extensions to alpha rules:
   // A: x -> a,b   B: &(a,b) -> c  ==>  A: x -> a,b,c
   bool seenStaticExtension = true;
-  while(seenStaticExtension) {
+  while (seenStaticExtension) {
     seenStaticExtension = false;
 
-    for(final (bCond, bImpl) in betaRules) {
-      if(bCond is! And) {
+    for (final (bCond, bImpl) in betaRules) {
+      if (bCond is! And) {
         throw ArgumentError("Cond is not And");
       }
       final bArgs = bCond.args.toSet();
@@ -133,13 +140,13 @@ Map<Logic, (Set<Logic>, List<int>)> applyBetaToAlphaRoute(DefaultMap<Logic, Set<
         final (xImpls, bb) = value;
         final xAll = xImpls.union({x});
         // A: ... -> a   B: &(...) -> a  is non-informative
-        if(!xAll.contains(bImpl) && xAll.containsAll(bArgs)) {
+        if (!xAll.contains(bImpl) && xAll.containsAll(bArgs)) {
           xImpls.add(bImpl);
 
           // we introduced new implication - now we have to restore
           // completeness of the whole set.
           final bImplImpl = xImpl[bImpl];
-          if(bImplImpl != null) {
+          if (bImplImpl != null) {
             xImpls.addAll(bImplImpl.$1);
           }
           seenStaticExtension = true;
@@ -149,7 +156,7 @@ Map<Logic, (Set<Logic>, List<int>)> applyBetaToAlphaRoute(DefaultMap<Logic, Set<
   }
 
   // attach beta-nodes which can be possibly triggered by an alpha-chain
-  for(int bIdx = 0; bIdx < betaRules.length; bIdx++) {
+  for (int bIdx = 0; bIdx < betaRules.length; bIdx++) {
     final (bCond, bImpl) = betaRules[bIdx];
     final bArgs = bCond.args.toSet();
     for (final entry in xImpl.entries) {
@@ -157,16 +164,19 @@ Map<Logic, (Set<Logic>, List<int>)> applyBetaToAlphaRoute(DefaultMap<Logic, Set<
       final (xImpls, bb) = value;
       final xAll = xImpls.union({x});
       // A: ... -> a   B: &(...) -> a      (non-informative)
-      if(xAll.contains(bImpl)) {
+      if (xAll.contains(bImpl)) {
         continue;
       }
       // A: x -> a...  B: &(!a,...) -> ... (will never trigger)
       // A: x -> a...  B: &(...) -> !a     (will never trigger)
-      if([for(final xi in xAll) (bArgs.contains(Not.create(xi)) || bImpl == Not.create(xi))].any((b) => b)) {
+      if ([
+        for (final xi in xAll)
+          (bArgs.contains(Not.create(xi)) || bImpl == Not.create(xi))
+      ].any((b) => b)) {
         continue;
       }
 
-      if(bArgs.intersection(xAll).isNotEmpty) {
+      if (bArgs.intersection(xAll).isNotEmpty) {
         bb.add(bIdx);
       }
     }
@@ -174,7 +184,6 @@ Map<Logic, (Set<Logic>, List<int>)> applyBetaToAlphaRoute(DefaultMap<Logic, Set<
 
   return xImpl;
 }
-
 
 /// build prerequisites table from rules
 ///
@@ -197,19 +206,20 @@ Map<Logic, (Set<Logic>, List<int>)> applyBetaToAlphaRoute(DefaultMap<Logic, Set<
 /// Note however, that these prerequisites may *not* be enough to prove a
 /// fact. An example is 'a -> b' rule, where prereq(a) is b, and prereq(b)
 /// is a. That's because a=T -> b=T, and b=F -> a=F, but a=F -> b=?
-DefaultMap<Logic, Set<Logic>> rules2Prereq(DefaultMap<(Logic, bool), Set<(Logic, bool)>> rules) {
+DefaultMap<Logic, Set<Logic>> rules2Prereq(
+    DefaultMap<(Logic, bool), Set<(Logic, bool)>> rules) {
   final prereq = DefaultMap<Logic, Set<Logic>>(() => <Logic>{});
   for (final entry in rules.entries) {
     final (key, impl) = (entry.key, entry.value);
     var (a, _) = key;
-    if(a is Not) {
+    if (a is Not) {
       a = a.arg;
     }
     for (var (i, _) in impl) {
       if (i is Not) {
         i = i.arg;
       }
-      if(!prereq.containsKey(i)) {
+      if (!prereq.containsKey(i)) {
         prereq[i] = <Logic>{};
       }
       prereq[i].add(a);
@@ -235,8 +245,6 @@ class _TautologyDetected implements Exception {
     return "Tautology detected: $a -> $b because $reason";
   }
 }
-
-
 
 /// ai - prover of logic rules
 ///
@@ -303,9 +311,10 @@ class Prover {
 
     // a -> b & c    --> a -> b  ;  a -> c
     // FIXME this is only correct when b & c != null
-    if(b is And) {
-      final sortedBArgs = List<Logic>.from(b.args)..sort((a, b) => a.toString().compareTo(b.toString()));
-      for(final bArg in sortedBArgs) {
+    if (b is And) {
+      final sortedBArgs = List<Logic>.from(b.args)
+        ..sort((a, b) => a.toString().compareTo(b.toString()));
+      for (final bArg in sortedBArgs) {
         processRule(a, bArg);
       }
     }
@@ -313,20 +322,23 @@ class Prover {
     // a -> b | c    -->  !b & !c -> !a
     //               -->   a & !b -> c
     //               -->   a & !b -> b
-    else if(b is Or) {
-      final sortedBArgs = List<Logic>.from(b.args)..sort((a, b) => a.toString().compareTo(b.toString()));
+    else if (b is Or) {
+      final sortedBArgs = List<Logic>.from(b.args)
+        ..sort((a, b) => a.toString().compareTo(b.toString()));
       // detect tautology first
-      if(a is LogicAtom) {
+      if (a is LogicAtom) {
         // tautology:  a -> a|c|...
-        if(sortedBArgs.contains(a)) {
+        if (sortedBArgs.contains(a)) {
           throw _TautologyDetected(a, b, "a -> a|c|...");
         }
       }
-      processRule(And.fromList([for(final bArg in b.args) Not.create(bArg)]), Not.create(a));
+      processRule(And.fromList([for (final bArg in b.args) Not.create(bArg)]),
+          Not.create(a));
 
-      for(int bIdx = 0; bIdx < sortedBArgs.length; bIdx++) {
+      for (int bIdx = 0; bIdx < sortedBArgs.length; bIdx++) {
         final bArg = sortedBArgs[bIdx];
-        final bRest = sortedBArgs.sublist(0, bIdx) + sortedBArgs.sublist(bIdx+1);
+        final bRest =
+            sortedBArgs.sublist(0, bIdx) + sortedBArgs.sublist(bIdx + 1);
         processRule(And.fromList([a, Not.create(bArg)]), Or.fromList(bRest));
       }
     }
@@ -335,29 +347,27 @@ class Prover {
 
     // a & b -> c    -->  IRREDUCIBLE CASE -- WE STORE IT AS IS
     //                    (this will be the basis of beta-network)
-    else if(a is And) {
-      final sortedAArgs = List<Logic>.from(a.args)..sort((a, b) => a.toString().compareTo(b.toString()));
-      if(sortedAArgs.contains(b)) {
+    else if (a is And) {
+      final sortedAArgs = List<Logic>.from(a.args)
+        ..sort((a, b) => a.toString().compareTo(b.toString()));
+      if (sortedAArgs.contains(b)) {
         throw _TautologyDetected(a, b, "a & b -> a");
       }
       provedRules.add((a, b));
       // XXX NOTE at present we ignore !c -> !a | !b
-    }
-
-    else if(a is Or) {
-      final sortedAArgs = List<Logic>.from(a.args)..sort((a, b) => a.toString().compareTo(b.toString()));
-      if(sortedAArgs.contains(b)) {
+    } else if (a is Or) {
+      final sortedAArgs = List<Logic>.from(a.args)
+        ..sort((a, b) => a.toString().compareTo(b.toString()));
+      if (sortedAArgs.contains(b)) {
         throw _TautologyDetected(a, b, "a | b -> a");
       }
-      for(final aArg in sortedAArgs) {
+      for (final aArg in sortedAArgs) {
         processRule(aArg, b);
       }
-    }
-
-    else {
+    } else {
       // both `a` and `b` are atoms
-      provedRules.add((a, b));             //  a ->  b
-      provedRules.add((Not.create(b), Not.create(a)));   // !b -> !a
+      provedRules.add((a, b)); //  a ->  b
+      provedRules.add((Not.create(b), Not.create(a))); // !b -> !a
     }
   }
 }
@@ -392,23 +402,24 @@ class Prover {
 class FactRules {
   late final List<(Set<(Logic, bool)>, (Logic, bool))> betaRules;
   late final Set<Logic> definedFacts;
-  final fullImplications = DefaultMap<(Logic, bool), Set<(Logic, bool)>>(() => <(Logic, bool)>{});
+  final fullImplications =
+      DefaultMap<(Logic, bool), Set<(Logic, bool)>>(() => <(Logic, bool)>{});
   final betaTriggers = DefaultMap<(Logic, bool), List<int>>(() => <int>[]);
   final prereq = DefaultMap<Logic, Set<Logic>>(() => <Logic>{});
 
   FactRules(List<String> rules) {
     // --- parse and process rules ---
     final p = Prover();
-    for(final rule in rules) {
+    for (final rule in rules) {
       final split = rule.split(RegExp(r"\s+"));
       final (aRaw, op, bRaw) = (split[0], split[1], split.sublist(2).join(' '));
 
       final a = Logic.fromString(aRaw);
       final b = Logic.fromString(bRaw);
 
-      if(op == "->") {
+      if (op == "->") {
         p.processRule(a, b);
-      } else if(op == "==") {
+      } else if (op == "==") {
         p.processRule(a, b);
         p.processRule(b, a);
       } else {
@@ -418,11 +429,10 @@ class FactRules {
 
     // --- build deduction networks ---
     betaRules = [
-      for(final (bCond, bImpl) in p.rulesBeta)
+      for (final (bCond, bImpl) in p.rulesBeta)
         (
           {
-            for(final a in bCond.args)
-              _asPair(a),
+            for (final a in bCond.args) _asPair(a),
           },
           _asPair(bImpl),
         ),
@@ -439,17 +449,15 @@ class FactRules {
 
     // extract defined fact names
     definedFacts = {
-      for(final k in implAB.keys)
-          _baseFact(k),
+      for (final k in implAB.keys) _baseFact(k),
     };
 
     // build rels (forward chains)
-    for(final entry in implAB.entries) {
+    for (final entry in implAB.entries) {
       final k = entry.key;
       final (impl, betaIdxs) = entry.value;
       fullImplications[_asPair(k)] = {
-        for(final i in impl)
-          _asPair(i),
+        for (final i in impl) _asPair(i),
       };
       betaTriggers[_asPair(k)] = betaIdxs;
     }
@@ -457,7 +465,7 @@ class FactRules {
     // build prereq (backward chains)
     final relPrereq = rules2Prereq(fullImplications);
     relPrereq.forEach((k, pItems) {
-      if(!prereq.containsKey(k)) {
+      if (!prereq.containsKey(k)) {
         prereq[k] = <Logic>{};
       }
       prereq[k].addAll(pItems);
@@ -465,11 +473,11 @@ class FactRules {
   }
 
   FactRules.pregenerated(
-      this.betaRules,
-      this.definedFacts,
-      Map<(Logic, bool), Set<(Logic, bool)>> fullImplications,
-      Map<(Logic, bool), List<int>> betaTriggers,
-      Map<Logic, Set<Logic>> prereq,
+    this.betaRules,
+    this.definedFacts,
+    Map<(Logic, bool), Set<(Logic, bool)>> fullImplications,
+    Map<(Logic, bool), List<int>> betaTriggers,
+    Map<Logic, Set<Logic>> prereq,
   ) {
     this.fullImplications.addAll(fullImplications);
     this.betaTriggers.addAll(betaTriggers);
@@ -478,48 +486,50 @@ class FactRules {
 
   Iterable<String> _definedFactLines() sync* {
     yield "final definedFacts = [";
-    for(final fact in definedFacts.toList()..sort()) {
-      yield "    ${fact.toString()},";
+    for (final fact in definedFacts.toList()..sort()) {
+      yield "  ${fact.toString()},";
     }
     yield "]; // definedFacts";
   }
 
   Iterable<String> _fullImplicationsLines() sync* {
     yield "final fullImplications = {";
-    for(final fact in definedFacts.toList()..sort()) {
-      for(final value in [true, false]) {
-        yield "    // Implications of $fact = $value:";
-        yield "    ($fact, $value): <(Logic, bool)>{";
+    for (final fact in definedFacts.toList()..sort()) {
+      for (final value in [true, false]) {
+        yield "  // Implications of $fact = $value:";
+        yield "  ($fact, $value): <(Logic, bool)>{";
         final implications = fullImplications[(fact, value)];
-        for(final implied in implications.toList()..sort(LogicBoolSort.sort)) {
-          yield "        ${implied.toString()},";
+        for (final implied in implications.toList()..sort(LogicBoolSort.sort)) {
+          yield "    ${implied.toString()},";
         }
-        yield "    },";
+        yield "  },";
       }
     }
-    yield " }; // fullImplications";
+    yield "}; // fullImplications";
   }
 
   Iterable<String> _prereqLines() sync* {
     yield "final prereq = {";
     yield "";
-    for(final fact in prereq.keys.toList()..sort()) {
-      yield "    // facts that could determine the value of $fact";
-      yield "    $fact: {";
+    for (final fact in prereq.keys.toList()..sort()) {
+      yield "  // facts that could determine the value of $fact";
+      yield "  $fact: {";
       for (final pFact in prereq[fact].toList()..sort()) {
-        yield "        $pFact,";
+        yield "    $pFact,";
       }
-      yield "    },";
+      yield "  },";
       yield "";
     }
     yield "}; // prereq";
   }
 
   Iterable<String> _betaRulesLines() sync* {
-    final reverseImplications = DefaultMap<(Logic, bool), List<(Set<(Logic, bool)>, int)>>(() => const []);
-    for(int n = 0; n < betaRules.length; n++) {
+    final reverseImplications =
+        DefaultMap<(Logic, bool), List<(Set<(Logic, bool)>, int)>>(
+            () => const []);
+    for (int n = 0; n < betaRules.length; n++) {
       final (pre, implied) = betaRules[n];
-      if(!reverseImplications.containsKey(implied)) {
+      if (!reverseImplications.containsKey(implied)) {
         reverseImplications[implied] = [];
       }
       reverseImplications[implied].add((pre, n));
@@ -530,28 +540,30 @@ class FactRules {
     yield "";
     int m = 0;
     final indices = {};
-    for(final implied in reverseImplications.keys.toList()..sort(LogicBoolSort.sort)) {
+    for (final implied in reverseImplications.keys.toList()
+      ..sort(LogicBoolSort.sort)) {
       final (fact, value) = implied;
-      yield "    // Rules implying $fact = $value";
-      for(final item in reverseImplications[implied]) {
+      yield "  // Rules implying $fact = $value";
+      for (final item in reverseImplications[implied]) {
         final (pre, n) = item;
         indices[n] = m;
         m += 1;
-        final setStr = (pre.toList()..sort(LogicBoolSort.sort)).map((t) => t.toString()).join(", ");
-        yield "    ({$setStr},";
-        yield "        $implied),";
+        final setStr = (pre.toList()..sort(LogicBoolSort.sort))
+            .map((t) => t.toString())
+            .join(", ");
+        yield "  ({$setStr},";
+        yield "    $implied),";
       }
       yield "";
     }
     yield "]; // betaRules";
 
     yield "final betaTriggers = {";
-    for(final query in betaTriggers.keys.toList()..sort(LogicBoolSort.sort)) {
+    for (final query in betaTriggers.keys.toList()..sort(LogicBoolSort.sort)) {
       final triggers = [
-        for(final n in betaTriggers[query])
-          indices[n],
+        for (final n in betaTriggers[query]) indices[n],
       ];
-      yield "    $query: <int>$triggers,";
+      yield "  $query: <int>$triggers,";
     }
     yield "}; // betaTriggers";
   }
@@ -559,7 +571,6 @@ class FactRules {
   Iterable<String> printRules() sync* {
     yield "import 'facts.dart';";
     yield "import 'logic.dart';";
-    yield "";
     yield "";
     yield* _definedFactLines();
     yield "";
@@ -602,7 +613,6 @@ class InconsistentAssumptions<K, V> implements Exception {
 
 /// A simple propositional knowledge base relying on compiled inference rules.
 class FactKB {
-
   final FactRules rules;
   final Map<Logic, bool?> _entries = {};
 
@@ -629,8 +639,8 @@ class FactKB {
   ///
   /// Returns true if the KB has actually been updated, false otherwise.
   bool _tell(Logic k, bool? v) {
-    if(_entries.containsKey(k) && _entries[k] != null) {
-      if(_entries[k] == v) {
+    if (_entries.containsKey(k) && _entries[k] != null) {
+      if (_entries[k] == v) {
         return false;
       } else {
         throw InconsistentAssumptions(this, k, v);
@@ -655,13 +665,13 @@ class FactKB {
     final betaRules = rules.betaRules;
 
     final factsCopy = Map<Logic, bool?>.from(facts);
-    while(factsCopy.isNotEmpty) {
+    while (factsCopy.isNotEmpty) {
       final betaMayTrigger = <int>{};
 
       // --- alpha chains ---
       for (final entry in factsCopy.entries) {
         final (k, v) = (entry.key, entry.value);
-        if(!_tell(k, v) || v == null) {
+        if (!_tell(k, v) || v == null) {
           continue;
         }
 
@@ -677,13 +687,12 @@ class FactKB {
       factsCopy.clear();
       for (final bIdx in betaMayTrigger) {
         final (bcond, bimpl) = betaRules[bIdx];
-        if(bcond.every(((Logic, bool) kv) => _entries[kv.$1] == kv.$2)) {
+        if (bcond.every(((Logic, bool) kv) => _entries[kv.$1] == kv.$2)) {
           factsCopy[bimpl.$1] = bimpl.$2;
         }
       }
     }
   }
-
 }
 
 /// Generate the default assumption rules
@@ -703,47 +712,35 @@ FactRules generateFactRules() {
     'extendedReal   ->  commutative',
     'complex        ->  commutative',
     'complex        ->  finite',
-
     'odd            ==  integer & !even',
     'even           ==  integer & !odd',
-
     'real           ->  complex',
     'extendedReal   ->  real | infinite',
     'real           ==  extendedReal & finite',
-
     'extendedReal        ==  extendedNegative | zero | extendedPositive',
     'extendedNegative    ==  extendedNonPositive & extendedNonzero',
     'extendedPositive    ==  extendedNonNegative & extendedNonzero',
-
     'extendedNonPositive ==  extendedReal & !extendedPositive',
     'extendedNonNegative ==  extendedReal & !extendedNegative',
-
     'real           ==  negative | zero | positive',
     'negative       ==  nonPositive & nonzero',
     'positive       ==  nonNegative & nonzero',
-
     'nonPositive    ==  real & !positive',
     'nonNegative    ==  real & !negative',
-
     'positive       ==  extendedPositive & finite',
     'negative       ==  extendedNegative & finite',
     'nonPositive    ==  extendedNonPositive & finite',
     'nonNegative    ==  extendedNonNegative & finite',
     'nonzero        ==  extendedNonzero & finite',
-
     'zero           ->  even & finite',
     'zero           ==  extendedNonNegative & extendedNonPositive',
     'zero           ==  nonNegative & nonPositive',
     'nonzero        ->  real',
-
     'prime          ->  integer & positive',
     'composite      ->  integer & positive & !prime',
     '!composite     ->  !positive | !even | prime',
-
     'irrational     ==  real & !rational',
-
     'imaginary      ->  !extendedReal',
-
     'infinite        ==  !finite',
     'nonInteger      ==  extendedReal & !integer',
     'extendedNonzero == extendedReal & !zero',
@@ -753,12 +750,12 @@ FactRules generateFactRules() {
 extension LogicBoolSort on (Logic, bool) {
   static int sort((Logic, bool) a, (Logic, bool) b) {
     final ab1 = a.$1.compareTo(b.$1);
-    if(ab1 != 0) {
+    if (ab1 != 0) {
       return ab1;
     }
-    if(a.$2 == false && b.$2 == true) {
+    if (a.$2 == false && b.$2 == true) {
       return -1;
-    } else if(a.$2 == true && b.$2 == false) {
+    } else if (a.$2 == true && b.$2 == false) {
       return 1;
     }
     return 0;

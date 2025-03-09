@@ -13,10 +13,9 @@ class Symbol extends AtomicExpr {
   late final Assumptions assumptions0;
   late final StdFactKB assumptionsKB;
 
-
   Symbol._(this.name, Assumptions assumptions) {
     originalAssumptions = assumptions.copy();
-    if(assumptions.commutative == null) {
+    if (assumptions.commutative == null) {
       assumptions = assumptions.copyWith(commutative: true);
     }
 
@@ -25,8 +24,7 @@ class Symbol extends AtomicExpr {
   }
 
   factory Symbol(String name, {Assumptions assumptions = const Assumptions()}) {
-
-    if(!_symbolDictionary.containsKey((name, assumptions))) {
+    if (!_symbolDictionary.containsKey((name, assumptions))) {
       _symbolDictionary[(name, assumptions)] = Symbol._(name, assumptions);
     }
 
@@ -41,15 +39,18 @@ class Symbol extends AtomicExpr {
 
 class Dummy extends Symbol {
   static int _count = 0;
-  static final int _baseDummyIndex = Random().nextInt(8*10^6) + 10^6; // 10^6 to 9*10^6
+  static final int _baseDummyIndex =
+      Random().nextInt(8 * 10 ^ 6) + 10 ^ 6; // 10^6 to 9*10^6
 
   late final int dummyIndex;
 
-  Dummy(String? name, int? dummyIndex, {Assumptions assumptions = const Assumptions()}) :
-        assert(dummyIndex == null || name != null, "If you specify a dummyIndex, you must also provide a name"),
+  Dummy(String? name, int? dummyIndex,
+      {Assumptions assumptions = const Assumptions()})
+      : assert(dummyIndex == null || name != null,
+            "If you specify a dummyIndex, you must also provide a name"),
         dummyIndex = dummyIndex ?? Dummy._baseDummyIndex + Dummy._count,
         super._(name ?? "Dummy_${Dummy._count}", assumptions) {
-    if(dummyIndex == null) {
+    if (dummyIndex == null) {
       Dummy._count += 1;
     }
   }

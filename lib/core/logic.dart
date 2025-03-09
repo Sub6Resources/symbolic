@@ -19,7 +19,7 @@ sealed class Logic implements Comparable<Logic> {
 
   @override
   bool operator ==(Object other) {
-    if(other.runtimeType != runtimeType) {
+    if (other.runtimeType != runtimeType) {
       return false;
     } else {
       return listEquals((other as Logic).args, args);
@@ -36,7 +36,7 @@ sealed class Logic implements Comparable<Logic> {
 
   @override
   int compareTo(Logic other) {
-    if(runtimeType != other.runtimeType) {
+    if (runtimeType != other.runtimeType) {
       final a = runtimeType.toString();
       final b = other.runtimeType.toString();
       return a.compareTo(b);
@@ -44,9 +44,9 @@ sealed class Logic implements Comparable<Logic> {
       final a = args;
       final b = other.args;
       // The following is equivalent to tuple comparison in Python
-      for(int i = 0; i < min(a.length, b.length); i++) {
+      for (int i = 0; i < min(a.length, b.length); i++) {
         final cmp = a[i].compareTo(b[i]);
-        if(cmp != 0) {
+        if (cmp != 0) {
           return cmp;
         }
       }
@@ -66,26 +66,27 @@ sealed class Logic implements Comparable<Logic> {
   /// !a & b | c
   factory Logic.fromString(String text) {
     Logic? lExpr; // current logical expression
-    String? schedOp;  // scheduled operation
-    for(String term in text.split(" ")) {
+    String? schedOp; // scheduled operation
+    for (String term in text.split(" ")) {
       // operation symbol
-      if("&|".contains(term)) {
-        if(schedOp != null) {
+      if ("&|".contains(term)) {
+        if (schedOp != null) {
           throw FormatException("double op forbidden: $term $schedOp");
         }
-        if(lExpr == null) {
-          throw FormatException("$term cannot be in the beginning of expression");
+        if (lExpr == null) {
+          throw FormatException(
+              "$term cannot be in the beginning of expression");
         }
         schedOp = term;
         continue;
       }
-      if(term.contains("&") || term.contains("|")) {
+      if (term.contains("&") || term.contains("|")) {
         throw FormatException("& and | must have space around them");
       }
 
       late final Logic logicTerm;
-      if(term[0] == "!") {
-        if(term.length == 1) {
+      if (term[0] == "!") {
+        if (term.length == 1) {
           throw FormatException("do not include space after '!'");
         }
         logicTerm = Not.create(LogicAtom(term.substring(1)));
@@ -94,18 +95,19 @@ sealed class Logic implements Comparable<Logic> {
       }
 
       // already scheduled operation, e.g. '&'
-      if(schedOp != null) {
-        lExpr = switch(schedOp) {
-          '&' => And.fromList([if(lExpr != null) lExpr, logicTerm]),
-          '|' => Or.fromList([if(lExpr != null) lExpr, logicTerm]),
-          String() => throw UnimplementedError("Operator $schedOp is not supported"),
+      if (schedOp != null) {
+        lExpr = switch (schedOp) {
+          '&' => And.fromList([if (lExpr != null) lExpr, logicTerm]),
+          '|' => Or.fromList([if (lExpr != null) lExpr, logicTerm]),
+          String() =>
+            throw UnimplementedError("Operator $schedOp is not supported"),
         };
         schedOp = null;
         continue;
       }
 
       // this should be atom
-      if(lExpr != null) {
+      if (lExpr != null) {
         throw FormatException("missing op between '$lExpr' and '$term'");
       }
 
@@ -113,10 +115,10 @@ sealed class Logic implements Comparable<Logic> {
     }
 
     // let's check that we ended up in correct state
-    if(schedOp != null) {
+    if (schedOp != null) {
       throw FormatException("premature end-of-expression in '$text'");
     }
-    if(lExpr == null) {
+    if (lExpr == null) {
       throw FormatException("'$text' is empty");
     }
 
@@ -124,23 +126,22 @@ sealed class Logic implements Comparable<Logic> {
     return lExpr;
   }
 
-   Logic expand() {
-     return this;
-   }
+  Logic expand() {
+    return this;
+  }
 }
 
-
 class True extends Logic {
-  True(): super([]);
+  True() : super([]);
 
   @override
   int get hashCode => true.hashCode;
 
   @override
   bool operator ==(Object other) {
-    if(other is True) {
+    if (other is True) {
       return true;
-    } else if(other is bool?) {
+    } else if (other is bool?) {
       return other == true;
     }
     return false;
@@ -153,16 +154,16 @@ class True extends Logic {
 }
 
 class False extends Logic {
-  False(): super([]);
+  False() : super([]);
 
   @override
   int get hashCode => false.hashCode;
 
   @override
   bool operator ==(Object other) {
-    if(other is False) {
+    if (other is False) {
       return true;
-    } else if(other is bool?) {
+    } else if (other is bool?) {
       return other == false;
     }
     return false;
@@ -176,16 +177,16 @@ class False extends Logic {
 
 class LogicAtom extends Logic {
   final String name;
-  LogicAtom(this.name): super([]);
+  LogicAtom(this.name) : super([]);
 
   @override
   int get hashCode => name.hashCode;
 
   @override
   bool operator ==(Object other) {
-    if(other is LogicAtom) {
+    if (other is LogicAtom) {
       return name == other.name;
-    } else if(other is String) {
+    } else if (other is String) {
       return name == other;
     }
     return false;
@@ -198,7 +199,7 @@ class LogicAtom extends Logic {
 
   @override
   int compareTo(Logic other) {
-    if(other is! LogicAtom) {
+    if (other is! LogicAtom) {
       return super.compareTo(other);
     }
     return name.compareTo(other.name);
@@ -210,26 +211,27 @@ class And extends Logic {
 
   static Logic fromList(List<Logic> args) {
     final bArgs = <Logic>[];
-    for(final a in args) {
-      if(a is False) {
+    for (final a in args) {
+      if (a is False) {
         return a;
-      } else if(a is True) {
-        continue;    // skip this argument
+      } else if (a is True) {
+        continue; // skip this argument
       }
       bArgs.add(a);
     }
 
-    final sortedArgs = And.flatten(bArgs).toSet().toList()..sort((l1, l2) => l1.hashCode.compareTo(l2.hashCode));
+    final sortedArgs = And.flatten(bArgs).toSet().toList()
+      ..sort((l1, l2) => l1.hashCode.compareTo(l2.hashCode));
 
-    for(final a in sortedArgs) {
-      if(sortedArgs.contains(Not.create(a))) {
+    for (final a in sortedArgs) {
+      if (sortedArgs.contains(Not.create(a))) {
         return False();
       }
     }
 
-    if(sortedArgs.length == 1) {
+    if (sortedArgs.length == 1) {
       return sortedArgs.first;
-    } else if(sortedArgs.isEmpty) {
+    } else if (sortedArgs.isEmpty) {
       return True();
     }
 
@@ -240,9 +242,9 @@ class And extends Logic {
     final argsQueue = List<Logic>.from(args);
     final res = <Logic>[];
 
-    while(argsQueue.isNotEmpty) {
+    while (argsQueue.isNotEmpty) {
       final arg = argsQueue.removeAt(0);
-      if(arg is And) {
+      if (arg is And) {
         argsQueue.addAll(arg.args);
         continue;
       }
@@ -255,8 +257,7 @@ class And extends Logic {
   Logic _evalPropagateNot() {
     // !(a&b&c ...) == !a | !b | !c ...
     return Or.fromList([
-      for(final a in args)
-        Not.create(a),
+      for (final a in args) Not.create(a),
     ]);
   }
 
@@ -264,15 +265,14 @@ class And extends Logic {
   @override
   Logic expand() {
     // first locate r
-    for(int i = 0; i < args.length; i++) {
+    for (int i = 0; i < args.length; i++) {
       final arg = args[i];
       if (arg is Or) {
         final aRest = args.sublist(0, i) + args.sublist(i + 1);
         final orTerms = [
-          for(final a in arg.args)
-            And.fromList([...aRest, a]),
+          for (final a in arg.args) And.fromList([...aRest, a]),
         ];
-        for(int j = 0; j < orTerms.length; j++) {
+        for (int j = 0; j < orTerms.length; j++) {
           if (orTerms[j] is And) {
             orTerms[j] = (orTerms[j] as And).expand();
           }
@@ -290,26 +290,27 @@ class Or extends Logic {
 
   static Logic fromList(List<Logic> args) {
     final bArgs = <Logic>[];
-    for(final a in args) {
-      if(a is True) {
+    for (final a in args) {
+      if (a is True) {
         return a;
-      } else if(a is False) {
-        continue;    // skip this argument
+      } else if (a is False) {
+        continue; // skip this argument
       }
       bArgs.add(a);
     }
 
-    final sortedArgs = Or.flatten(bArgs).toSet().toList()..sort((l1, l2) => l1.hashCode.compareTo(l2.hashCode));
+    final sortedArgs = Or.flatten(bArgs).toSet().toList()
+      ..sort((l1, l2) => l1.hashCode.compareTo(l2.hashCode));
 
-    for(final a in sortedArgs) {
-      if(sortedArgs.contains(Not.create(a))) {
+    for (final a in sortedArgs) {
+      if (sortedArgs.contains(Not.create(a))) {
         return True();
       }
     }
 
-    if(sortedArgs.length == 1) {
+    if (sortedArgs.length == 1) {
       return sortedArgs.first;
-    } else if(sortedArgs.isEmpty) {
+    } else if (sortedArgs.isEmpty) {
       return False();
     }
 
@@ -320,9 +321,9 @@ class Or extends Logic {
     final argsQueue = List<Logic>.from(args);
     final res = <Logic>[];
 
-    while(argsQueue.isNotEmpty) {
+    while (argsQueue.isNotEmpty) {
       final arg = argsQueue.removeAt(0);
-      if(arg is Or) {
+      if (arg is Or) {
         argsQueue.addAll(arg.args);
         continue;
       }
@@ -334,17 +335,16 @@ class Or extends Logic {
 
   Logic _evalPropagateNot() {
     return And.fromList([
-      for(final a in args)
-        Not.create(a),
+      for (final a in args) Not.create(a),
     ]);
   }
 }
 
 class Not extends Logic {
-  Not._(Logic arg): super([arg]);
+  Not._(Logic arg) : super([arg]);
 
   static Logic create(Logic arg) {
-    return switch(arg) {
+    return switch (arg) {
       LogicAtom() => Not._(arg),
       True() => False(),
       False() => True(),

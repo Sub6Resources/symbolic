@@ -229,36 +229,36 @@ class Assumptions {
 
   @override
   int get hashCode =>
-    commutative.hashCode ^
-    complex.hashCode ^
-    imaginary.hashCode ^
-    real.hashCode ^
-    extendedReal.hashCode ^
-    integer.hashCode ^
-    nonInteger.hashCode ^
-    odd.hashCode ^
-    even.hashCode ^
-    prime.hashCode ^
-    composite.hashCode ^
-    zero.hashCode ^
-    nonzero.hashCode ^
-    rational.hashCode ^
-    algebraic.hashCode ^
-    transcendental.hashCode ^
-    irrational.hashCode ^
-    finite.hashCode ^
-    infinite.hashCode ^
-    negative.hashCode ^
-    nonNegative.hashCode ^
-    positive.hashCode ^
-    nonPositive.hashCode ^
-    extendedNegative.hashCode ^
-    extendedNonNegative.hashCode ^
-    extendedPositive.hashCode ^
-    extendedNonPositive.hashCode ^
-    extendedNonzero.hashCode ^
-    hermitian.hashCode ^
-    antiHermitian.hashCode;
+      commutative.hashCode ^
+      complex.hashCode ^
+      imaginary.hashCode ^
+      real.hashCode ^
+      extendedReal.hashCode ^
+      integer.hashCode ^
+      nonInteger.hashCode ^
+      odd.hashCode ^
+      even.hashCode ^
+      prime.hashCode ^
+      composite.hashCode ^
+      zero.hashCode ^
+      nonzero.hashCode ^
+      rational.hashCode ^
+      algebraic.hashCode ^
+      transcendental.hashCode ^
+      irrational.hashCode ^
+      finite.hashCode ^
+      infinite.hashCode ^
+      negative.hashCode ^
+      nonNegative.hashCode ^
+      positive.hashCode ^
+      nonPositive.hashCode ^
+      extendedNegative.hashCode ^
+      extendedNonNegative.hashCode ^
+      extendedPositive.hashCode ^
+      extendedNonPositive.hashCode ^
+      extendedNonzero.hashCode ^
+      hermitian.hashCode ^
+      antiHermitian.hashCode;
 
   @override
   bool operator ==(Object other) {
@@ -328,7 +328,7 @@ class Assumptions {
       extendedNonPositive: extendedNonPositive,
       extendedNonzero: extendedNonzero,
       hermitian: hermitian,
-      antiHermitian: antiHermitian
+      antiHermitian: antiHermitian,
     );
   }
 
@@ -440,8 +440,8 @@ class Assumptions {
 class StdFactKB extends FactKB {
   // late final Assumptions _generator;
 
-  StdFactKB([Assumptions? facts]): super(_assumeRules) {
-    if(facts == null) {
+  StdFactKB([Assumptions? facts]) : super(_assumeRules) {
+    if (facts == null) {
       // _generator = Assumptions();
     } else {
       // _generator = facts;

@@ -175,14 +175,14 @@ class _DeepMatcher extends Matcher {
 
   _Mismatch? _compare2Records(Record2 expected, Object? actual,
       _RecursiveMatcher matcher, int depth, String location) {
-    if(actual is Record2) {
+    if (actual is Record2) {
       // Check first element of Record
       var rp = matcher(expected.$1, actual.$1, '$location.\$1', depth);
-      if(rp != null) return rp;
+      if (rp != null) return rp;
 
       // Check second element of Record
       rp = matcher(expected.$2, actual.$2, '$location.\$2', depth);
-      if(rp != null) return rp;
+      if (rp != null) return rp;
 
       return null;
     } else {
@@ -197,11 +197,11 @@ class _DeepMatcher extends Matcher {
 
       for (var expectedElement in expected) {
         if (other.every((actualElement) =>
-        matcher(expectedElement, actualElement, location, depth) != null)) {
+            matcher(expectedElement, actualElement, location, depth) != null)) {
           return _Mismatch(
               location,
               actual,
-                  (description, verbose) => description
+              (description, verbose) => description
                   .add('does not contain ')
                   .addDescriptionOf(expectedElement));
         }
@@ -242,7 +242,7 @@ class _DeepMatcher extends Matcher {
         return _Mismatch(
             location,
             actual,
-                (description, verbose) =>
+            (description, verbose) =>
                 description.add('== threw ').addDescriptionOf(e));
       }
     }
@@ -272,7 +272,7 @@ class _DeepMatcher extends Matcher {
             return _Mismatch(
                 location,
                 actual,
-                    (description, verbose) => description
+                (description, verbose) => description
                     .add('${err}is missing map key ')
                     .addDescriptionOf(key));
           }
@@ -283,7 +283,7 @@ class _DeepMatcher extends Matcher {
             return _Mismatch(
                 location,
                 actual,
-                    (description, verbose) => description
+                (description, verbose) => description
                     .add('${err}has extra map key ')
                     .addDescriptionOf(key));
           }
@@ -296,8 +296,9 @@ class _DeepMatcher extends Matcher {
         }
 
         return null;
-      } else if(expected is Record2) {
-        return _compare2Records(expected, actual, _recursiveMatch, depth+1, location);
+      } else if (expected is Record2) {
+        return _compare2Records(
+            expected, actual, _recursiveMatch, depth + 1, location);
       }
     }
 
@@ -305,7 +306,7 @@ class _DeepMatcher extends Matcher {
     // show it for us.
     if (depth > 0) {
       return _Mismatch(location, actual,
-              (description, verbose) => description.addDescriptionOf(expected),
+          (description, verbose) => description.addDescriptionOf(expected),
           instead: true);
     } else {
       return _Mismatch(location, actual, null);

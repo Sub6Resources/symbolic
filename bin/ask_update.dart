@@ -1,7 +1,6 @@
 import 'package:symbolic/core/facts.dart' show generateFactRules;
 import 'dart:io';
 
-
 void main() async {
   final representation = generateFactRules().toDart();
   final code = """

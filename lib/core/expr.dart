@@ -39,5 +39,5 @@ class Expr extends Basic {
 }
 
 class AtomicExpr extends Expr implements Atom {
-  AtomicExpr(): super([]);
+  AtomicExpr() : super([]);
 }

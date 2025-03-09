@@ -12,7 +12,6 @@ void main() {
   final r = LogicAtom('r');
   final t = LogicAtom('t');
 
-
   test("test logic cmp", () {
     final l1 = And.fromList([a, Not.create(b)]);
     final l2 = And.fromList([a, Not.create(b)]);
@@ -28,7 +27,6 @@ void main() {
     expect((Not.create(b) < Not.create(a)), isFalse);
   });
 
-
   test('test logic onearg', () {
     expect(And.fromList([]), isA<True>());
     expect(Or.fromList([]), isA<False>());
@@ -42,12 +40,10 @@ void main() {
     expect(Or.fromList([a]), equals(a));
   });
 
-
   test('test logic xnotx', () {
     expect(And.fromList([a, Not.create(a)]), isA<False>());
     expect(Or.fromList([a, Not.create(a)]), isA<True>());
   });
-
 
   test('test logic eval TF', () {
     expect(And.fromList([False(), False()]), isA<False>());
@@ -66,52 +62,71 @@ void main() {
     expect(Or.fromList([a, False()]), equals(a));
   });
 
-
   test('test logic combine args', () {
     expect(And.fromList([a, b, a]), equals(And.fromList([a, b])));
     expect(Or.fromList([a, b, a]), equals(Or.fromList([a, b])));
 
-    expect(And.fromList([And.fromList([a, b]), And.fromList([c, d])]),
+    expect(
+        And.fromList([
+          And.fromList([a, b]),
+          And.fromList([c, d])
+        ]),
         equals(And.fromList([a, b, c, d])));
-    expect(Or.fromList([Or.fromList([a, b]), Or.fromList([c, d])]),
+    expect(
+        Or.fromList([
+          Or.fromList([a, b]),
+          Or.fromList([c, d])
+        ]),
         equals(Or.fromList([a, b, c, d])));
 
     expect(
-        Or.fromList([
-          t,
-          And.fromList([n, p, r]),
-          And.fromList([n, r]),
-          And.fromList([n, p, r]),
-          t,
-          And.fromList([n, r]),
-        ]),
-        equals(Or.fromList([
-          t,
-          And.fromList([n, p, r]),
-          And.fromList([n, r]),
-        ])),
+      Or.fromList([
+        t,
+        And.fromList([n, p, r]),
+        And.fromList([n, r]),
+        And.fromList([n, p, r]),
+        t,
+        And.fromList([n, r]),
+      ]),
+      equals(Or.fromList([
+        t,
+        And.fromList([n, p, r]),
+        And.fromList([n, r]),
+      ])),
     );
   });
 
-
   test('test logic expand', () {
-    final t = And.fromList([Or.fromList([a, b]), c]);
-    expect(t.expand(), equals(Or.fromList([And.fromList([a, c]), And.fromList([b, c])])));
+    final t = And.fromList([
+      Or.fromList([a, b]),
+      c
+    ]);
+    expect(
+        t.expand(),
+        equals(Or.fromList([
+          And.fromList([a, c]),
+          And.fromList([b, c])
+        ])));
 
-    final t2 = And.fromList([Or.fromList([a, Not.create(b)]), b]);
+    final t2 = And.fromList([
+      Or.fromList([a, Not.create(b)]),
+      b
+    ]);
     expect(t2.expand(), equals(And.fromList([a, b])));
 
-    final t3 = And.fromList([Or.fromList([a, b]), Or.fromList([c, d])]);
-    expect(t3.expand(), equals(
-      Or.fromList([
-        And.fromList([a, c]),
-        And.fromList([a, d]),
-        And.fromList([b, c]),
-        And.fromList([b, d]),
-      ])
-    ));
+    final t3 = And.fromList([
+      Or.fromList([a, b]),
+      Or.fromList([c, d])
+    ]);
+    expect(
+        t3.expand(),
+        equals(Or.fromList([
+          And.fromList([a, c]),
+          And.fromList([a, d]),
+          And.fromList([b, c]),
+          And.fromList([b, d]),
+        ])));
   });
-
 
   test('test logic fromstring', () {
     final S = Logic.fromString;
@@ -120,8 +135,18 @@ void main() {
     expect(S('!a'), equals(Not.create(a)));
     expect(S('a & b'), equals(And.fromList([a, b])));
     expect(S('a | b'), equals(Or.fromList([a, b])));
-    expect(S('a | b & c'), equals(And.fromList([Or.fromList([a, b]), c])));
-    expect(S('a & b | c'), equals(Or.fromList([And.fromList([a, b]), c])));
+    expect(
+        S('a | b & c'),
+        equals(And.fromList([
+          Or.fromList([a, b]),
+          c
+        ])));
+    expect(
+        S('a & b | c'),
+        equals(Or.fromList([
+          And.fromList([a, b]),
+          c
+        ])));
     expect(S('a & b & c'), equals(And.fromList([a, b, c])));
     expect(S('a | b | c'), equals(Or.fromList([a, b, c])));
 
@@ -145,8 +170,10 @@ void main() {
 
     // NOTE: we may want to change default Not behaviour and put this
     // functionality into some method.
-    expect(Not.create(And.fromList([a, b])), equals(Or.fromList([Not.create(a), Not.create(b)])));
-    expect(Not.create(Or.fromList([a, b])), equals(And.fromList([Not.create(a), Not.create(b)])));
+    expect(Not.create(And.fromList([a, b])),
+        equals(Or.fromList([Not.create(a), Not.create(b)])));
+    expect(Not.create(Or.fromList([a, b])),
+        equals(And.fromList([Not.create(a), Not.create(b)])));
   });
 
   test('test formatting', () {

@@ -1,11 +1,10 @@
 import 'dart:collection';
 
 class DefaultMap<K, V> with MapMixin<K, V> {
-
   final Map<K, V> _map;
   final V Function() defaultValue;
 
-  DefaultMap(this.defaultValue): _map = {};
+  DefaultMap(this.defaultValue) : _map = {};
 
   @override
   V operator [](Object? key) {
@@ -29,5 +28,4 @@ class DefaultMap<K, V> with MapMixin<K, V> {
   V? remove(Object? key) {
     return _map.remove(key);
   }
-
 }
