@@ -1,3 +1,7 @@
+## 0.0.4
+
+* More CI work.
+
 ## 0.0.3
 
 * Setup CI pipeline.

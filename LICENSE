@@ -1,5 +1,10 @@
 Copyright 2025 The uniTbrow Developers
 
+Much of this code is derived from SymPy (https://github.com/sympy/sympy). That code is subject to
+the SymPy license (a copy of which can be found in the LICENSE.sympy file in this directory).
+
+Code that is original to this package is licensed as follows:
+
 Redistribution and use in source and binary forms, with or without modification, are permitted
 provided that the following conditions are met:
 
