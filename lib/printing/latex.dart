@@ -280,12 +280,11 @@ enum MonomialOrdering {
 }
 
 class LatexPrinter extends Printer<LatexPrinterface> {
-
   LatexPrinterSettings settings;
 
   LatexPrinter({this.settings = const LatexPrinterSettings()}) {
-    if(settings.foldShortFrac == null
-        && settings.mode == LatexPrintingMode.inline) {
+    if (settings.foldShortFrac == null &&
+        settings.mode == LatexPrintingMode.inline) {
       settings = settings.copyWith(foldShortFrac: true);
     }
   }
@@ -294,17 +293,20 @@ class LatexPrinter extends Printer<LatexPrinterface> {
   String doPrint(Basic expr) {
     final tex = super.doPrint(expr);
 
-    return switch(settings.mode) {
+    return switch (settings.mode) {
       LatexPrintingMode.plain => tex,
       LatexPrintingMode.inline => "\$$tex\$",
-      LatexPrintingMode.equation => settings.itex? "\$\$$tex\$\$": "\\begin{equation}$tex\\end{equation}",
-      LatexPrintingMode.equationStar => settings.itex? "\$\$$tex\$\$": "\\begin{equation*}$tex\\end{equation*}",
+      LatexPrintingMode.equation =>
+        settings.itex ? "\$\$$tex\$\$" : "\\begin{equation}$tex\\end{equation}",
+      LatexPrintingMode.equationStar => settings.itex
+          ? "\$\$$tex\$\$"
+          : "\\begin{equation*}$tex\\end{equation*}",
     };
   }
 
   @override
   String printObject(Object expr) {
-    return switch(expr) {
+    return switch (expr) {
       Relational() => _printRelational(expr),
       Symbol() => _printSymbol(expr),
       Object() => throw NoPrinterAvailable(),
@@ -314,7 +316,7 @@ class LatexPrinter extends Printer<LatexPrinterface> {
   String _printRelational(Relational expr) {
     String gt = ">";
     String lt = "<";
-    if(settings.itex) {
+    if (settings.itex) {
       gt = r"\gt";
       lt = r"\lt";
     }
@@ -333,35 +335,38 @@ class LatexPrinter extends Printer<LatexPrinterface> {
 
   String _printSymbol(Symbol expr, {SymbolStyle style = SymbolStyle.plain}) {
     final name = settings.symbolNames[expr];
-    if(name != null) {
+    if (name != null) {
       return name;
     }
 
     return _dealWithSuperSub(expr.name, style: style);
   }
 
-  String _dealWithSuperSub(String string, {SymbolStyle style = SymbolStyle.plain}) {
+  String _dealWithSuperSub(
+    String string, {
+    SymbolStyle style = SymbolStyle.plain,
+  }) {
     String name;
     List<String> supers;
     List<String> subs;
-    if(string.contains("{")) {
+    if (string.contains("{")) {
       (name, supers, subs) = (string, [], []);
     } else {
       (name, supers, subs) = splitSuperSub(string);
 
       name = translate(name);
-      supers = [for(final sup in supers) translate(sup)];
-      subs = [for(final sub in subs) translate(sub)];
+      supers = [for (final sup in supers) translate(sup)];
+      subs = [for (final sub in subs) translate(sub)];
     }
 
-    if(style == SymbolStyle.bold) {
+    if (style == SymbolStyle.bold) {
       name = "\\mathbf{$name}";
     }
 
-    if(supers.isNotEmpty) {
+    if (supers.isNotEmpty) {
       name += "^{${supers.join(" ")}}";
     }
-    if(subs.isNotEmpty) {
+    if (subs.isNotEmpty) {
       name += "_{${subs.join(" ")}}";
     }
 
@@ -382,7 +387,7 @@ class LatexPrinter extends Printer<LatexPrinterface> {
 /// Rules from https://tex.stackexchange.com/a/34586/41112.
 String latexEscape(String s) {
   s = s.replaceAll(r'\', r'\textbackslash');
-  for(final c in r"&%$#_{}".split("")) {
+  for (final c in r"&%$#_{}".split("")) {
     s = s.replaceAll(c, "\\$c");
   }
   s = s.replaceAll("~", r"\textasciitilde");

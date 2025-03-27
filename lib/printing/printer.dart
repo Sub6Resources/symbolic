@@ -10,10 +10,9 @@ abstract class Printer<I extends Printerface> {
   Map<String, dynamic> _context;
   int _printLevel;
 
-
-
-  Printer(): _printLevel = 0, _context = {};  // mutable during printing
-
+  Printer()
+      : _printLevel = 0,
+        _context = {}; // mutable during printing
 
   String doPrint(Basic expr) {
     return print(expr);
@@ -30,7 +29,7 @@ abstract class Printer<I extends Printerface> {
 
     try {
       // 1. Let the object print itself
-      if(expr is I) {
+      if (expr is I) {
         return (expr as I).print();
       }
 
@@ -65,7 +64,7 @@ extension on Map<String, dynamic> {
   /// Returns a shallow copy of this Map.
   Map<String, dynamic> copy() {
     final copy = <String, dynamic>{};
-    for(final entry in entries) {
+    for (final entry in entries) {
       copy[entry.key] = entry.value;
     }
     return copy;
