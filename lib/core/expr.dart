@@ -5,35 +5,35 @@ import 'basic.dart';
 class Expr extends Basic {
   Expr(super.args);
 
-  Basic operator -() {
+  Expr operator -() {
     throw UnimplementedError();
   }
 
-  Basic operator +(Basic other) {
+  Expr operator +(Object? other) {
     throw UnimplementedError();
   }
 
-  Basic operator -(Basic other) {
+  Expr operator -(Object? other) {
     throw UnimplementedError();
   }
 
-  Basic operator *(Basic other) {
+  Expr operator *(Object? other) {
     throw UnimplementedError();
   }
 
-  Basic operator ^(Basic other) {
+  Expr operator ^(Object? other) {
     throw UnimplementedError();
   }
 
-  Basic operator /(Basic other) {
+  Expr operator /(Object? other) {
     throw UnimplementedError();
   }
 
-  Basic operator %(Basic other) {
+  Expr operator %(Object? other) {
     throw UnimplementedError();
   }
 
-  Basic operator ~/(Basic other) {
+  Expr operator ~/(Object? other) {
     throw UnimplementedError();
   }
 }

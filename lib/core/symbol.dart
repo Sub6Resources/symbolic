@@ -6,6 +6,7 @@ import 'package:symbolic/core/expr.dart';
 
 Map<(String, Assumptions), Symbol> _symbolDictionary = {};
 
+/// TODO add documentation
 class Symbol extends AtomicExpr {
   final String name;
 
@@ -37,6 +38,7 @@ class Symbol extends AtomicExpr {
   }
 }
 
+/// TODO add documentation
 class Dummy extends Symbol {
   static int _count = 0;
   static final int _baseDummyIndex =
@@ -44,9 +46,11 @@ class Dummy extends Symbol {
 
   late final int dummyIndex;
 
-  Dummy(String? name, int? dummyIndex,
-      {Assumptions assumptions = const Assumptions()})
-      : assert(dummyIndex == null || name != null,
+  Dummy({
+    String? name,
+    int? dummyIndex,
+    Assumptions assumptions = const Assumptions(),
+  })  : assert(dummyIndex == null || name != null,
             "If you specify a dummyIndex, you must also provide a name"),
         dummyIndex = dummyIndex ?? Dummy._baseDummyIndex + Dummy._count,
         super._(name ?? "Dummy_${Dummy._count}", assumptions) {
