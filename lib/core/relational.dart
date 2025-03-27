@@ -1,4 +1,3 @@
-import 'package:symbolic/core/basic.dart';
 import 'package:symbolic/logic/boolalg.dart';
 
 import 'expr.dart';

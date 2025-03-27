@@ -7,12 +7,12 @@ import 'package:symbolic/core/basic.dart';
 /// If you want to define your custom Printer or your custom printing method
 /// for your custom class then see the example above: [printer_example_].
 abstract class Printer<I extends Printerface> {
-  Map<String, dynamic> _context;
-  int _printLevel;
+  // Map<String, dynamic> _context;
+  // int _printLevel;
 
-  Printer()
-      : _printLevel = 0,
-        _context = {}; // mutable during printing
+  Printer();
+  // : _printLevel = 0,
+  //   _context = {}; // mutable during printing
 
   String doPrint(Basic expr) {
     return print(expr);
@@ -25,7 +25,7 @@ abstract class Printer<I extends Printerface> {
   ///     2. Take the best fitting method defined in the printer.
   ///     3. As fall-back use the emptyPrinter method for the printer.
   String print(Basic expr) {
-    _printLevel++;
+    // _printLevel++;
 
     try {
       // 1. Let the object print itself
@@ -42,7 +42,7 @@ abstract class Printer<I extends Printerface> {
         return emptyPrinter(expr);
       }
     } finally {
-      _printLevel--;
+      // _printLevel--;
     }
   }
 
@@ -59,14 +59,3 @@ abstract class Printerface {
 
 /// Exception thrown when no printer is available for the given object.
 class NoPrinterAvailable implements Exception {}
-
-extension on Map<String, dynamic> {
-  /// Returns a shallow copy of this Map.
-  Map<String, dynamic> copy() {
-    final copy = <String, dynamic>{};
-    for (final entry in entries) {
-      copy[entry.key] = entry.value;
-    }
-    return copy;
-  }
-}
