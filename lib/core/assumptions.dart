@@ -159,6 +159,7 @@ class Assumptions {
   /// See https://en.wikipedia.org/wiki/Skew-Hermitian_matrix
   final bool? antiHermitian;
 
+  /// Creates a new Assumptions object with the specified assumptions.
   const Assumptions({
     this.commutative,
     this.complex,
@@ -297,6 +298,7 @@ class Assumptions {
     return false;
   }
 
+  /// Creates a copy of these assumptions.
   Assumptions copy() {
     return Assumptions._full(
       commutative: commutative,
@@ -332,6 +334,10 @@ class Assumptions {
     );
   }
 
+  /// Creates a copy of these assumptions with the specified items replaced.
+  ///
+  /// null values passed to this method will not replace existing true/false
+  /// values. Create a new `Assumptions` object to remove an assumption.
   Assumptions copyWith({
     bool? commutative,
     bool? complex,
@@ -398,6 +404,8 @@ class Assumptions {
     );
   }
 
+  /// Used internally in symbolic's logic system to deduce all possible
+  /// assumptions from the original assumptions.
   Map<Logic, bool?> toLogicMap() {
     return {
       LogicAtom("commutative"): commutative,

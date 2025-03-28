@@ -11,7 +11,7 @@ class Basic {
   }
 
   Basic subs(Object substitutions, [bool simultaneous = false]) {
-    throw UnimplementedError();
+    throw UnimplementedError("subs not implemented in Basic");
     // TODO: implement
     // if(substitutions is (Object, Object)) {
     //   return this;
