@@ -1,4 +1,9 @@
+import 'package:symbolic/core/add.dart';
 import 'package:symbolic/core/basic.dart';
+import 'package:symbolic/core/expr.dart' show Expr;
+import 'package:symbolic/core/mul.dart';
+import 'package:symbolic/core/numbers.dart';
+import 'package:symbolic/core/power.dart';
 import 'package:symbolic/core/relational.dart';
 import 'package:symbolic/core/symbol.dart';
 import 'package:symbolic/printing/conventions.dart';
@@ -32,7 +37,7 @@ class LatexPrinterSettings {
   /// Emit `^{p/q}` instead of `^{\frac{p}{q}}` when the denominator is
   /// simple enough (at most two terms and no powers). The default value is
   /// true for inline mode, false otherwise.
-  final bool? foldShortFrac;
+  final bool foldShortFrac;
 
   /// If set to true, `\Re` and `\Im` are used for `re` and `im`, respectively.
   /// The default is false leading to `\operatorname{re}` and `\operatorname{im}`.
@@ -125,7 +130,7 @@ class LatexPrinterSettings {
     this.fullPrec = false,
     this.foldFracPowers = false,
     this.foldFuncBrackets = false,
-    this.foldShortFrac,
+    bool? foldShortFrac,
     this.gothicReIm = false,
     this.invTrigStyle = InvTrigStyle.abbreviated,
     this.imaginaryUnit = ImaginaryUnit.i,
@@ -144,63 +149,7 @@ class LatexPrinterSettings {
     this.permCyclic = true,
     this.rootNotation = true,
     this.symbolNames = const {},
-  });
-
-  LatexPrinterSettings copyWith({
-    AdjointStyle? adjointStyle,
-    DecimalSeparator? decimalSeparator,
-    DiffOperator? diffOperator,
-    bool? fullPrec,
-    bool? foldFracPowers,
-    bool? foldFuncBrackets,
-    bool? foldShortFrac,
-    bool? gothicReIm,
-    InvTrigStyle? invTrigStyle,
-    ImaginaryUnit? imaginaryUnit,
-    bool? itex,
-    bool? lnNotation,
-    double? longFracRatio,
-    MatrixDelimiter? matDelim,
-    String? matStr,
-    SymbolStyle? matSymbolStyle,
-    int? max,
-    int? min,
-    LatexPrintingMode? mode,
-    MulSymbol? mulSymbol,
-    MonomialOrdering? order,
-    bool? parenthesizeSuper,
-    bool? permCyclic,
-    bool? rootNotation,
-    Map<Symbol, String>? symbolNames,
-  }) {
-    return LatexPrinterSettings(
-      adjointStyle: adjointStyle ?? this.adjointStyle,
-      decimalSeparator: decimalSeparator ?? this.decimalSeparator,
-      diffOperator: diffOperator ?? this.diffOperator,
-      fullPrec: fullPrec ?? this.fullPrec,
-      foldFracPowers: foldFracPowers ?? this.foldFracPowers,
-      foldFuncBrackets: foldFuncBrackets ?? this.foldFuncBrackets,
-      foldShortFrac: foldShortFrac ?? this.foldShortFrac,
-      gothicReIm: gothicReIm ?? this.gothicReIm,
-      invTrigStyle: invTrigStyle ?? this.invTrigStyle,
-      imaginaryUnit: imaginaryUnit ?? this.imaginaryUnit,
-      itex: itex ?? this.itex,
-      lnNotation: lnNotation ?? this.lnNotation,
-      longFracRatio: longFracRatio ?? this.longFracRatio,
-      matDelim: matDelim ?? this.matDelim,
-      matStr: matStr ?? this.matStr,
-      matSymbolStyle: matSymbolStyle ?? this.matSymbolStyle,
-      max: max ?? this.max,
-      min: min ?? this.min,
-      mode: mode ?? this.mode,
-      mulSymbol: mulSymbol ?? this.mulSymbol,
-      order: order ?? this.order,
-      parenthesizeSuper: parenthesizeSuper ?? this.parenthesizeSuper,
-      permCyclic: permCyclic ?? this.permCyclic,
-      rootNotation: rootNotation ?? this.rootNotation,
-      symbolNames: symbolNames ?? Map<Symbol, String>.from(this.symbolNames),
-    );
-  }
+  }) : foldShortFrac = foldShortFrac ?? mode == LatexPrintingMode.inline;
 }
 
 enum AdjointStyle {
@@ -266,10 +215,22 @@ enum LatexPrintingMode {
 }
 
 enum MulSymbol {
-  none,
-  ldot,
-  dot,
-  times;
+  none(r" "),
+  ldot(r" \,.\, "),
+  dot(r" \cdot "),
+  times(r" \times ");
+
+  final String latex;
+  String get latexNumbers {
+    return switch (this) {
+      MulSymbol.none => dot.latex,
+      MulSymbol.ldot => ldot.latex,
+      MulSymbol.dot => dot.latex,
+      MulSymbol.times => times.latex,
+    };
+  }
+
+  const MulSymbol(this.latex);
 }
 
 enum MonomialOrdering {
@@ -282,12 +243,7 @@ enum MonomialOrdering {
 class LatexPrinter extends Printer<LatexPrinterface> {
   LatexPrinterSettings settings;
 
-  LatexPrinter({this.settings = const LatexPrinterSettings()}) {
-    if (settings.foldShortFrac == null &&
-        settings.mode == LatexPrintingMode.inline) {
-      settings = settings.copyWith(foldShortFrac: true);
-    }
-  }
+  LatexPrinter({this.settings = const LatexPrinterSettings()});
 
   @override
   String doPrint(Basic expr) {
@@ -304,13 +260,118 @@ class LatexPrinter extends Printer<LatexPrinterface> {
     };
   }
 
+  /// Returns true if the expression needs to be wrapped in brackets when
+  /// printed as part of an Add, false otherwise. This is false for most
+  /// things.
+  bool _needsAddBrackets(Expr expr) {
+    // TODO implement as needed
+    // if(expr.isRelational) {
+    //   return true;
+    // }
+    // if(expr.has(Mod)) {
+    //   return true;
+    // }
+    // if(expr.isAdd) {
+    //   return true;
+    // }
+    return false;
+  }
+
   @override
   String printObject(Object expr) {
     return switch (expr) {
+      Add() => _printAdd(expr),
+      Mul() => _printMul(expr),
+      Pow() => _printPow(expr),
+      Rational() => _printRational(expr),
       Relational() => _printRelational(expr),
       Symbol() => _printSymbol(expr),
+      Basic() => _printBasic(expr),
       Object() => throw NoPrinterAvailable(),
     };
+  }
+
+  String _printAdd(Add expr, {MonomialOrdering? order}) {
+    final terms = _asOrderedTerms(expr, order: order);
+
+    String tex = "";
+    for (int i = 0; i < terms.length; i++) {
+      if (i != 0) {
+        if (terms[i].couldExtractMinusSign()) {
+          tex += " - ";
+          terms[i] = -terms[i];
+        } else {
+          tex += " + ";
+        }
+      }
+      String termTex = this.print(terms[i]);
+      if (_needsAddBrackets(terms[i])) {
+        termTex = "\\left($termTex\\right)";
+      }
+      tex += termTex;
+    }
+    return tex;
+  }
+
+  String _printBasic(Basic expr) {
+    final name = _dealWithSuperSub(expr.runtimeType.toString());
+    if (expr.args.isNotEmpty) {
+      final ls = [for (final o in expr.args) this.print(o)];
+      return "\\operatorname{$name}\\left(${ls.join(", ")}\\right)";
+    } else {
+      return "\\text{$name}";
+    }
+  }
+
+  String _printMul(Mul expr) {
+    final separator = settings.mulSymbol.latex;
+    final numSeparator = settings.mulSymbol.latexNumbers;
+
+    // TODO add full treatment
+
+    return expr.args.fold<(String, bool)>(("", false), (prev, e) {
+      final (prevText, prevIsNumber) = prev;
+      final thisIsNumber = e is Number;
+      String sep;
+      if (prevIsNumber && thisIsNumber) {
+        sep = numSeparator;
+      } else {
+        sep = separator;
+      }
+      if (prevText.isEmpty) {
+        sep = "";
+      }
+
+      return ("$prevText$sep${this.print(e)}", thisIsNumber);
+    }).$1;
+  }
+
+  String _printPow(Pow expr) {
+    // TODO if(expr.exp.isRational) {}
+    // TODO if(expr.base.isFunction) {}
+    final exp = this.print(expr.exp);
+    final base = this.print(expr.base);
+    // TODO if(expr.base.isSymbol) {}
+    // TODO else if(expr.base.isFloat) {}
+    // TODO else if(expr.base is Derivative) {}
+    return "$base^{$exp}";
+  }
+
+  String _printRational(Rational expr) {
+    if (expr.q != BigInt.one) {
+      String sign = "";
+      BigInt p = expr.p;
+      if (expr.p < BigInt.zero) {
+        sign = "- ";
+        p = -p;
+      }
+      if (settings.foldShortFrac) {
+        return "$sign$p / ${expr.q}";
+      }
+      return "$sign\\frac{$p}{${expr.q}}";
+    } else {
+      return expr.p.toString();
+    }
   }
 
   String _printRelational(Relational expr) {
@@ -371,6 +432,16 @@ class LatexPrinter extends Printer<LatexPrinterface> {
     }
 
     return name;
+  }
+
+  List<Expr> _asOrderedTerms(Add expr, {MonomialOrdering? order}) {
+    order ??= settings.order;
+
+    if (order == MonomialOrdering.none) {
+      return List.from(expr.args);
+    } else {
+      return expr.asOrderedTerms(order);
+    }
   }
 
   @override
