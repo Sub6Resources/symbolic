@@ -246,7 +246,7 @@ class LatexPrinter extends Printer<LatexPrinterface> {
   LatexPrinter({this.settings = const LatexPrinterSettings()});
 
   @override
-  String doPrint(Basic expr) {
+  String doPrint(Basic<dynamic> expr) {
     final tex = super.doPrint(expr);
 
     return switch (settings.mode) {
@@ -281,7 +281,15 @@ class LatexPrinter extends Printer<LatexPrinterface> {
   String printObject(Object expr) {
     return switch (expr) {
       Add() => _printAdd(expr),
+      ComplexInfinity() => _printComplexInfinity(expr),
+      Exp1() => _printExp1(expr),
+      GoldenRatio() => _printGoldenRatio(expr),
+      ImaginaryUnit() => _printImaginaryUnit(expr),
+      Infinity() => _printInfinity(expr),
       Mul() => _printMul(expr),
+      NaN() => _printNaN(expr),
+      NegativeInfinity() => _printNegativeInfinity(expr),
+      Pi() => _printPi(expr),
       Pow() => _printPow(expr),
       Rational() => _printRational(expr),
       Relational() => _printRelational(expr),
@@ -313,7 +321,39 @@ class LatexPrinter extends Printer<LatexPrinterface> {
     return tex;
   }
 
-  String _printBasic(Basic expr) {
+  String _printComplexInfinity(ComplexInfinity expr) {
+    return r"\tilde{\infty}";
+  }
+
+  String _printNaN(NaN expr) {
+    return r"\text{NaN}";
+  }
+
+  String _printExp1(Exp1 expr) {
+    return r"e";
+  }
+
+  String _printPi(Pi expr) {
+    return r"\pi";
+  }
+
+  String _printGoldenRatio(GoldenRatio expr) {
+    return r"\phi";
+  }
+
+  String _printImaginaryUnit(ImaginaryUnit expr) {
+    return settings.imaginaryUnit.latex;
+  }
+
+  String _printInfinity(Infinity expr) {
+    return r"\infty";
+  }
+
+  String _printNegativeInfinity(NegativeInfinity expr) {
+    return r"-\infty";
+  }
+
+  String _printBasic(Basic<dynamic> expr) {
     final name = _dealWithSuperSub(expr.runtimeType.toString());
     if (expr.args.isNotEmpty) {
       final ls = [for (final o in expr.args) this.print(o)];
@@ -445,7 +485,7 @@ class LatexPrinter extends Printer<LatexPrinterface> {
   }
 
   @override
-  String emptyPrinter(Basic expr) {
+  String emptyPrinter(Basic<dynamic> expr) {
     final s = super.emptyPrinter(expr);
 
     return "\\mathtt{\\text{${latexEscape(s)}}}";

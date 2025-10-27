@@ -440,6 +440,85 @@ class Assumptions {
       LogicAtom("antiHermitian"): antiHermitian,
     };
   }
+
+  /// Creates a new set of assumptions with the [parentAssumptions] filled
+  /// in wherever there are null values in the existing assumptions.
+  Assumptions inherit(Assumptions parentAssumptions) {
+    return Assumptions._full(
+      commutative: commutative ?? parentAssumptions.commutative,
+      complex: complex ?? parentAssumptions.complex,
+      imaginary: imaginary ?? parentAssumptions.imaginary,
+      real: real ?? parentAssumptions.real,
+      extendedReal: extendedReal ?? parentAssumptions.extendedReal,
+      integer: integer ?? parentAssumptions.integer,
+      nonInteger: nonInteger ?? parentAssumptions.nonInteger,
+      odd: odd ?? parentAssumptions.odd,
+      even: even ?? parentAssumptions.even,
+      prime: prime ?? parentAssumptions.prime,
+      composite: composite ?? parentAssumptions.composite,
+      zero: zero ?? parentAssumptions.zero,
+      nonzero: nonzero ?? parentAssumptions.nonzero,
+      rational: rational ?? parentAssumptions.rational,
+      algebraic: algebraic ?? parentAssumptions.algebraic,
+      transcendental: transcendental ?? parentAssumptions.transcendental,
+      irrational: irrational ?? parentAssumptions.irrational,
+      finite: finite ?? parentAssumptions.finite,
+      infinite: infinite ?? parentAssumptions.infinite,
+      negative: negative ?? parentAssumptions.negative,
+      nonNegative: nonNegative ?? parentAssumptions.nonNegative,
+      positive: positive ?? parentAssumptions.positive,
+      nonPositive: nonPositive ?? parentAssumptions.nonPositive,
+      extendedNegative: extendedNegative ?? parentAssumptions.extendedNegative,
+      extendedNonNegative: extendedNonNegative ?? parentAssumptions.extendedNonNegative,
+      extendedPositive:  extendedPositive ?? parentAssumptions.extendedPositive,
+      extendedNonPositive: extendedNonPositive ?? parentAssumptions.extendedNonPositive,
+      extendedNonzero: extendedNonzero ?? parentAssumptions.extendedNonzero,
+      hermitian: hermitian ?? parentAssumptions.hermitian,
+      antiHermitian: antiHermitian ?? parentAssumptions.antiHermitian,
+    );
+  }
+
+  /// A new Assumption object is created with a copy of the existing
+  /// assumptions except that any assumptions that are set  to `true` in
+  /// [assumptions] are now set to `null`
+  ///
+  /// For example, `Integer` is a `Rational`, but a `Rational` is assumed
+  /// to not be `prime`, whereas an `Integer` could be `prime`.
+  /// TODO use better example
+  Assumptions remove(Assumptions assumptions) {
+    return Assumptions._full(
+      commutative: assumptions.commutative == true? null: commutative,
+      complex: assumptions.complex == true? null: complex,
+      imaginary: assumptions.imaginary == true? null: imaginary,
+      real: assumptions.real == true? null: real,
+      extendedReal: assumptions.extendedReal == true? null: extendedReal,
+      integer: assumptions.integer == true? null: integer,
+      nonInteger: assumptions.nonInteger == true? null: nonInteger,
+      odd: assumptions.odd == true? null: odd,
+      even: assumptions.even == true? null: even,
+      prime: assumptions.prime == true? null: prime,
+      composite: assumptions.composite == true? null: composite,
+      zero: assumptions.zero == true? null: zero,
+      nonzero: assumptions.nonzero == true? null: nonzero,
+      rational: assumptions.rational == true? null: rational,
+      algebraic: assumptions.algebraic == true? null: algebraic,
+      transcendental: assumptions.transcendental == true? null: transcendental,
+      irrational: assumptions.irrational == true? null: irrational,
+      finite: assumptions.finite == true? null: finite,
+      infinite: assumptions.infinite == true? null: infinite,
+      negative: assumptions.negative == true? null: negative,
+      nonNegative: assumptions.nonNegative == true? null: nonNegative,
+      positive: assumptions.positive == true? null: positive,
+      nonPositive: assumptions.nonPositive == true? null: nonPositive,
+      extendedNegative: assumptions.extendedNegative == true? null: extendedNegative,
+      extendedNonNegative: assumptions.extendedNonNegative == true? null: extendedNonNegative,
+      extendedPositive: assumptions.extendedPositive == true? null: extendedPositive,
+      extendedNonPositive: assumptions.extendedNonPositive == true? null: extendedNonPositive,
+      extendedNonzero: assumptions.extendedNonzero == true? null: extendedNonzero,
+      hermitian: assumptions.hermitian == true? null: hermitian,
+      antiHermitian: assumptions.antiHermitian == true? null: antiHermitian,
+    );
+  }
 }
 
 /// A FactKB specialized for the built-in rules

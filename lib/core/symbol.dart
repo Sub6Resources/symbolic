@@ -22,6 +22,8 @@ class Symbol extends AtomicExpr {
 
     assumptionsKB = StdFactKB(assumptions);
     assumptions0 = assumptionsKB.toAssumptions();
+
+    addPrecomputedAssumptions(assumptions0);
   }
 
   factory Symbol(String name, {Assumptions assumptions = const Assumptions()}) {
@@ -32,9 +34,31 @@ class Symbol extends AtomicExpr {
     return _symbolDictionary[(name, assumptions)]!;
   }
 
+  bool get iscomparable => false;
+
+  @override
+  bool get isSymbol => true;
+
+  @override
+  bool get issymbol => true;
+
   @override
   Set<Basic> freeSymbols() {
     return {this};
+  }
+
+  @override
+  Dummy asDummy() {
+    if(assumeCommutative != false) {
+      return Dummy(name: this.name);
+    } else {
+      return Dummy(name: this.name, assumptions: Assumptions(commutative: assumeCommutative));
+    }
+  }
+
+  @override
+  Expr func(List<Basic<dynamic>> args) {
+    return this;
   }
 }
 
@@ -42,7 +66,7 @@ class Symbol extends AtomicExpr {
 class Dummy extends Symbol {
   static int _count = 0;
   static final int _baseDummyIndex =
-      Random().nextInt(8 * 10 ^ 6) + 10 ^ 6; // 10^6 to 9*10^6
+      Random().nextInt(8 * pow(10, 6) as int) + pow(10, 6) as int; // 10^6 to 9*10^6
 
   late final int dummyIndex;
 

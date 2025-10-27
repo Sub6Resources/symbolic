@@ -1,6 +1,87 @@
 import 'dart:math';
 import 'package:symbolic/utils/list_equals.dart';
 
+
+/// Return true if all [args] are true, null if there is any null else false
+/// unless [quickExit] is true (then return null as soon as a second false
+/// is seen.
+///
+/// [fuzzyGroup] is like [fuzzyAnd] except that it is more
+/// conservative in returning a false, waiting to make sure that all
+/// arguments are true or false and returning null if any arguments are
+/// null. It also has the capability of permitting only a single false and
+/// returning null if more than one is seen. For example, the presence of a
+/// single transcendental amongst rationals would indicate that the group is
+/// no longer rational; but a second transcendental in the group would make the
+/// determination impossible.
+///
+/// Examples
+/// ========
+///
+/// By default, multiple falses mean the group is broken:
+///
+/// > fuzzyGroup([false, false, true]);
+///
+/// false
+///
+/// If multiple falses mean the group status is unknown, then set
+/// [quickExit] to true so null can be returned when the second false is seen:
+///
+/// > fuzzyGroup([false, false, true], quickExit: true);
+///
+/// null
+///
+/// But if only a single false is seen then the group is known to be broken:
+///
+/// > fuzzyGroup([false, true, true], quickExit: true);
+///
+/// false
+bool? fuzzyGroup(Iterable<bool?> args, {bool quickExit = false}) {
+  bool sawOther = false;
+  for(final a in args) {
+    if(a == true) {
+      continue;
+    }
+    if(a == null) {
+      return null;
+    }
+    if(quickExit && sawOther) {
+      return null;
+    }
+    sawOther = true;
+  }
+  return !sawOther;
+}
+
+/// Not in fuzzy logic
+///
+/// Returns null if `v == null` otherwise `!v`
+bool? fuzzyNot(bool? v) {
+  if(v == null) {
+    return v;
+  } else {
+    return !v;
+  }
+}
+
+/// Or in fuzzy logic. Returns true (any true), false (all false), or null
+///
+/// See the documentation of fuzzyAnd and fuzzyNot for more info. fuzzyOr is
+/// related to the two by the standard De Morgan's law.
+bool? fuzzyOr(List<bool?> args) {
+  bool? rv = false;
+  for(final ai in args) {
+    if(ai == true) {
+      return true;
+    }
+    if(rv == false) {
+      // this will stop updating if a null is ever encountered
+      rv = ai;
+    }
+  }
+  return rv;
+}
+
 // Logic expressions handling
 //
 // NOTE

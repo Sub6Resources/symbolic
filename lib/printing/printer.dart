@@ -14,7 +14,7 @@ abstract class Printer<I extends Printerface> {
   // : _printLevel = 0,
   //   _context = {}; // mutable during printing
 
-  String doPrint(Basic expr) {
+  String doPrint(Basic<dynamic> expr) {
     return print(expr);
   }
 
@@ -24,7 +24,7 @@ abstract class Printer<I extends Printerface> {
   ///     1. Let the object print itself if it knows how.
   ///     2. Take the best fitting method defined in the printer.
   ///     3. As fall-back use the emptyPrinter method for the printer.
-  String print(Basic expr) {
+  String print(Basic<dynamic> expr) {
     // _printLevel++;
 
     try {
@@ -48,7 +48,7 @@ abstract class Printer<I extends Printerface> {
 
   String printObject(Object expr);
 
-  String emptyPrinter(Basic expr) {
+  String emptyPrinter(Basic<dynamic> expr) {
     return expr.toString();
   }
 }
