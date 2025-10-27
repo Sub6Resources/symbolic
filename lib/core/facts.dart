@@ -607,7 +607,7 @@ class InconsistentAssumptions<K, V> implements Exception {
 
   @override
   String toString() {
-    return "$kb, $fact=$value";
+    return "Inconsistent Assumptions: $kb, $fact=$value";
   }
 }
 
@@ -620,7 +620,7 @@ class FactKB {
 
   @override
   String toString() {
-    return "{\n${(_entries.entries.toList()..sort()).map((e) => "\t${e.key}: ${e.value}").join(",\n")}}";
+    return "{\n${(_entries.entries.toList()..sort((a, b) => a.key.compareTo(b.key))).map((e) => "\t${e.key}: ${e.value}").join(",\n")}\n}";
   }
 
   bool? operator [](Object? key) {
@@ -671,7 +671,7 @@ class FactKB {
       // --- alpha chains ---
       for (final entry in factsCopy.entries) {
         final (k, v) = (entry.key, entry.value);
-        if (!_tell(k, v) || v == null) {
+        if (v == null || !_tell(k, v)) {
           continue;
         }
 

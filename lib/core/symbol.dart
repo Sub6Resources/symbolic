@@ -6,6 +6,7 @@ import 'package:symbolic/core/expr.dart';
 
 Map<(String, Assumptions), Symbol> _symbolDictionary = {};
 
+/// TODO add documentation
 class Symbol extends AtomicExpr {
   final String name;
 
@@ -21,6 +22,8 @@ class Symbol extends AtomicExpr {
 
     assumptionsKB = StdFactKB(assumptions);
     assumptions0 = assumptionsKB.toAssumptions();
+
+    addPrecomputedAssumptions(assumptions0);
   }
 
   factory Symbol(String name, {Assumptions assumptions = const Assumptions()}) {
@@ -31,22 +34,47 @@ class Symbol extends AtomicExpr {
     return _symbolDictionary[(name, assumptions)]!;
   }
 
+  bool get iscomparable => false;
+
+  @override
+  bool get isSymbol => true;
+
+  @override
+  bool get issymbol => true;
+
   @override
   Set<Basic> freeSymbols() {
     return {this};
   }
+
+  @override
+  Dummy asDummy() {
+    if(assumeCommutative != false) {
+      return Dummy(name: this.name);
+    } else {
+      return Dummy(name: this.name, assumptions: Assumptions(commutative: assumeCommutative));
+    }
+  }
+
+  @override
+  Expr func(List<Basic<dynamic>> args) {
+    return this;
+  }
 }
 
+/// TODO add documentation
 class Dummy extends Symbol {
   static int _count = 0;
   static final int _baseDummyIndex =
-      Random().nextInt(8 * 10 ^ 6) + 10 ^ 6; // 10^6 to 9*10^6
+      Random().nextInt(8 * pow(10, 6) as int) + pow(10, 6) as int; // 10^6 to 9*10^6
 
   late final int dummyIndex;
 
-  Dummy(String? name, int? dummyIndex,
-      {Assumptions assumptions = const Assumptions()})
-      : assert(dummyIndex == null || name != null,
+  Dummy({
+    String? name,
+    int? dummyIndex,
+    Assumptions assumptions = const Assumptions(),
+  })  : assert(dummyIndex == null || name != null,
             "If you specify a dummyIndex, you must also provide a name"),
         dummyIndex = dummyIndex ?? Dummy._baseDummyIndex + Dummy._count,
         super._(name ?? "Dummy_${Dummy._count}", assumptions) {

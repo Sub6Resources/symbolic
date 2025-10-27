@@ -37,6 +37,7 @@ final definedFacts = [
   LogicAtom('zero'),
 ]; // definedFacts
 
+
 final fullImplications = {
   // Implications of LogicAtom('algebraic') = true:
   (LogicAtom('algebraic'), true): <(Logic, bool)>{
@@ -57,13 +58,15 @@ final fullImplications = {
     (LogicAtom('zero'), false),
   },
   // Implications of LogicAtom('antiHermitian') = true:
-  (LogicAtom('antiHermitian'), true): <(Logic, bool)>{},
+  (LogicAtom('antiHermitian'), true): <(Logic, bool)>{
+  },
   // Implications of LogicAtom('antiHermitian') = false:
   (LogicAtom('antiHermitian'), false): <(Logic, bool)>{
     (LogicAtom('imaginary'), false),
   },
   // Implications of LogicAtom('commutative') = true:
-  (LogicAtom('commutative'), true): <(Logic, bool)>{},
+  (LogicAtom('commutative'), true): <(Logic, bool)>{
+  },
   // Implications of LogicAtom('commutative') = false:
   (LogicAtom('commutative'), false): <(Logic, bool)>{
     (LogicAtom('algebraic'), false),
@@ -148,7 +151,8 @@ final fullImplications = {
     (LogicAtom('zero'), false),
   },
   // Implications of LogicAtom('composite') = false:
-  (LogicAtom('composite'), false): <(Logic, bool)>{},
+  (LogicAtom('composite'), false): <(Logic, bool)>{
+  },
   // Implications of LogicAtom('even') = true:
   (LogicAtom('even'), true): <(Logic, bool)>{
     (LogicAtom('algebraic'), true),
@@ -315,7 +319,8 @@ final fullImplications = {
     (LogicAtom('zero'), false),
   },
   // Implications of LogicAtom('hermitian') = true:
-  (LogicAtom('hermitian'), true): <(Logic, bool)>{},
+  (LogicAtom('hermitian'), true): <(Logic, bool)>{
+  },
   // Implications of LogicAtom('hermitian') = false:
   (LogicAtom('hermitian'), false): <(Logic, bool)>{
     (LogicAtom('composite'), false),
@@ -363,7 +368,8 @@ final fullImplications = {
     (LogicAtom('zero'), false),
   },
   // Implications of LogicAtom('imaginary') = false:
-  (LogicAtom('imaginary'), false): <(Logic, bool)>{},
+  (LogicAtom('imaginary'), false): <(Logic, bool)>{
+  },
   // Implications of LogicAtom('infinite') = true:
   (LogicAtom('infinite'), true): <(Logic, bool)>{
     (LogicAtom('algebraic'), false),
@@ -436,7 +442,8 @@ final fullImplications = {
     (LogicAtom('zero'), false),
   },
   // Implications of LogicAtom('irrational') = false:
-  (LogicAtom('irrational'), false): <(Logic, bool)>{},
+  (LogicAtom('irrational'), false): <(Logic, bool)>{
+  },
   // Implications of LogicAtom('negative') = true:
   (LogicAtom('negative'), true): <(Logic, bool)>{
     (LogicAtom('commutative'), true),
@@ -461,7 +468,8 @@ final fullImplications = {
     (LogicAtom('zero'), false),
   },
   // Implications of LogicAtom('negative') = false:
-  (LogicAtom('negative'), false): <(Logic, bool)>{},
+  (LogicAtom('negative'), false): <(Logic, bool)>{
+  },
   // Implications of LogicAtom('nonInteger') = true:
   (LogicAtom('nonInteger'), true): <(Logic, bool)>{
     (LogicAtom('commutative'), true),
@@ -476,7 +484,8 @@ final fullImplications = {
     (LogicAtom('zero'), false),
   },
   // Implications of LogicAtom('nonInteger') = false:
-  (LogicAtom('nonInteger'), false): <(Logic, bool)>{},
+  (LogicAtom('nonInteger'), false): <(Logic, bool)>{
+  },
   // Implications of LogicAtom('nonNegative') = true:
   (LogicAtom('nonNegative'), true): <(Logic, bool)>{
     (LogicAtom('commutative'), true),
@@ -561,7 +570,8 @@ final fullImplications = {
     (LogicAtom('zero'), false),
   },
   // Implications of LogicAtom('odd') = false:
-  (LogicAtom('odd'), false): <(Logic, bool)>{},
+  (LogicAtom('odd'), false): <(Logic, bool)>{
+  },
   // Implications of LogicAtom('positive') = true:
   (LogicAtom('positive'), true): <(Logic, bool)>{
     (LogicAtom('commutative'), true),
@@ -618,7 +628,8 @@ final fullImplications = {
     (LogicAtom('zero'), false),
   },
   // Implications of LogicAtom('prime') = false:
-  (LogicAtom('prime'), false): <(Logic, bool)>{},
+  (LogicAtom('prime'), false): <(Logic, bool)>{
+  },
   // Implications of LogicAtom('rational') = true:
   (LogicAtom('rational'), true): <(Logic, bool)>{
     (LogicAtom('algebraic'), true),
@@ -684,7 +695,8 @@ final fullImplications = {
     (LogicAtom('zero'), false),
   },
   // Implications of LogicAtom('transcendental') = false:
-  (LogicAtom('transcendental'), false): <(Logic, bool)>{},
+  (LogicAtom('transcendental'), false): <(Logic, bool)>{
+  },
   // Implications of LogicAtom('zero') = true:
   (LogicAtom('zero'), true): <(Logic, bool)>{
     (LogicAtom('algebraic'), true),
@@ -717,10 +729,13 @@ final fullImplications = {
     (LogicAtom('transcendental'), false),
   },
   // Implications of LogicAtom('zero') = false:
-  (LogicAtom('zero'), false): <(Logic, bool)>{},
+  (LogicAtom('zero'), false): <(Logic, bool)>{
+  },
 }; // fullImplications
 
+
 final prereq = {
+
   // facts that could determine the value of LogicAtom('algebraic')
   LogicAtom('algebraic'): {
     LogicAtom('commutative'),
@@ -1350,262 +1365,135 @@ final prereq = {
     LogicAtom('real'),
     LogicAtom('transcendental'),
   },
+
 }; // prereq
+
 
 // Note: the order of the beta rules is used in the betaTriggers
 final betaRules = [
+
   // Rules implying LogicAtom('composite') = true
-  (
-    {
-      (LogicAtom('even'), true),
-      (LogicAtom('positive'), true),
-      (LogicAtom('prime'), false)
-    },
-    (LogicAtom('composite'), true)
-  ),
+  ({(LogicAtom('even'), true), (LogicAtom('positive'), true), (LogicAtom('prime'), false)},
+    (LogicAtom('composite'), true)),
 
   // Rules implying LogicAtom('even') = false
-  (
-    {
-      (LogicAtom('composite'), false),
-      (LogicAtom('positive'), true),
-      (LogicAtom('prime'), false)
-    },
-    (LogicAtom('even'), false)
-  ),
+  ({(LogicAtom('composite'), false), (LogicAtom('positive'), true), (LogicAtom('prime'), false)},
+    (LogicAtom('even'), false)),
 
   // Rules implying LogicAtom('even') = true
-  (
-    {(LogicAtom('integer'), true), (LogicAtom('odd'), false)},
-    (LogicAtom('even'), true)
-  ),
+  ({(LogicAtom('integer'), true), (LogicAtom('odd'), false)},
+    (LogicAtom('even'), true)),
 
   // Rules implying LogicAtom('extendedNegative') = true
-  (
-    {
-      (LogicAtom('extendedPositive'), false),
-      (LogicAtom('extendedReal'), true),
-      (LogicAtom('zero'), false)
-    },
-    (LogicAtom('extendedNegative'), true)
-  ),
-  (
-    {
-      (LogicAtom('extendedNonPositive'), true),
-      (LogicAtom('extendedNonzero'), true)
-    },
-    (LogicAtom('extendedNegative'), true)
-  ),
+  ({(LogicAtom('extendedPositive'), false), (LogicAtom('extendedReal'), true), (LogicAtom('zero'), false)},
+    (LogicAtom('extendedNegative'), true)),
+  ({(LogicAtom('extendedNonPositive'), true), (LogicAtom('extendedNonzero'), true)},
+    (LogicAtom('extendedNegative'), true)),
 
   // Rules implying LogicAtom('extendedNonNegative') = true
-  (
-    {(LogicAtom('extendedNegative'), false), (LogicAtom('extendedReal'), true)},
-    (LogicAtom('extendedNonNegative'), true)
-  ),
+  ({(LogicAtom('extendedNegative'), false), (LogicAtom('extendedReal'), true)},
+    (LogicAtom('extendedNonNegative'), true)),
 
   // Rules implying LogicAtom('extendedNonPositive') = true
-  (
-    {(LogicAtom('extendedPositive'), false), (LogicAtom('extendedReal'), true)},
-    (LogicAtom('extendedNonPositive'), true)
-  ),
+  ({(LogicAtom('extendedPositive'), false), (LogicAtom('extendedReal'), true)},
+    (LogicAtom('extendedNonPositive'), true)),
 
   // Rules implying LogicAtom('extendedNonzero') = true
-  (
-    {(LogicAtom('extendedReal'), true), (LogicAtom('zero'), false)},
-    (LogicAtom('extendedNonzero'), true)
-  ),
+  ({(LogicAtom('extendedReal'), true), (LogicAtom('zero'), false)},
+    (LogicAtom('extendedNonzero'), true)),
 
   // Rules implying LogicAtom('extendedPositive') = true
-  (
-    {
-      (LogicAtom('extendedNegative'), false),
-      (LogicAtom('extendedReal'), true),
-      (LogicAtom('zero'), false)
-    },
-    (LogicAtom('extendedPositive'), true)
-  ),
-  (
-    {
-      (LogicAtom('extendedNonNegative'), true),
-      (LogicAtom('extendedNonzero'), true)
-    },
-    (LogicAtom('extendedPositive'), true)
-  ),
+  ({(LogicAtom('extendedNegative'), false), (LogicAtom('extendedReal'), true), (LogicAtom('zero'), false)},
+    (LogicAtom('extendedPositive'), true)),
+  ({(LogicAtom('extendedNonNegative'), true), (LogicAtom('extendedNonzero'), true)},
+    (LogicAtom('extendedPositive'), true)),
 
   // Rules implying LogicAtom('extendedReal') = false
-  (
-    {(LogicAtom('infinite'), false), (LogicAtom('real'), false)},
-    (LogicAtom('extendedReal'), false)
-  ),
-  (
-    {
-      (LogicAtom('extendedNegative'), false),
-      (LogicAtom('extendedPositive'), false),
-      (LogicAtom('zero'), false)
-    },
-    (LogicAtom('extendedReal'), false)
-  ),
+  ({(LogicAtom('infinite'), false), (LogicAtom('real'), false)},
+    (LogicAtom('extendedReal'), false)),
+  ({(LogicAtom('extendedNegative'), false), (LogicAtom('extendedPositive'), false), (LogicAtom('zero'), false)},
+    (LogicAtom('extendedReal'), false)),
 
   // Rules implying LogicAtom('infinite') = true
-  (
-    {(LogicAtom('extendedReal'), true), (LogicAtom('real'), false)},
-    (LogicAtom('infinite'), true)
-  ),
+  ({(LogicAtom('extendedReal'), true), (LogicAtom('real'), false)},
+    (LogicAtom('infinite'), true)),
 
   // Rules implying LogicAtom('irrational') = true
-  (
-    {(LogicAtom('rational'), false), (LogicAtom('real'), true)},
-    (LogicAtom('irrational'), true)
-  ),
+  ({(LogicAtom('rational'), false), (LogicAtom('real'), true)},
+    (LogicAtom('irrational'), true)),
 
   // Rules implying LogicAtom('negative') = true
-  (
-    {
-      (LogicAtom('positive'), false),
-      (LogicAtom('real'), true),
-      (LogicAtom('zero'), false)
-    },
-    (LogicAtom('negative'), true)
-  ),
-  (
-    {(LogicAtom('nonPositive'), true), (LogicAtom('nonzero'), true)},
-    (LogicAtom('negative'), true)
-  ),
-  (
-    {(LogicAtom('extendedNegative'), true), (LogicAtom('finite'), true)},
-    (LogicAtom('negative'), true)
-  ),
+  ({(LogicAtom('positive'), false), (LogicAtom('real'), true), (LogicAtom('zero'), false)},
+    (LogicAtom('negative'), true)),
+  ({(LogicAtom('nonPositive'), true), (LogicAtom('nonzero'), true)},
+    (LogicAtom('negative'), true)),
+  ({(LogicAtom('extendedNegative'), true), (LogicAtom('finite'), true)},
+    (LogicAtom('negative'), true)),
 
   // Rules implying LogicAtom('nonInteger') = true
-  (
-    {(LogicAtom('extendedReal'), true), (LogicAtom('integer'), false)},
-    (LogicAtom('nonInteger'), true)
-  ),
+  ({(LogicAtom('extendedReal'), true), (LogicAtom('integer'), false)},
+    (LogicAtom('nonInteger'), true)),
 
   // Rules implying LogicAtom('nonNegative') = true
-  (
-    {(LogicAtom('negative'), false), (LogicAtom('real'), true)},
-    (LogicAtom('nonNegative'), true)
-  ),
-  (
-    {(LogicAtom('extendedNonNegative'), true), (LogicAtom('finite'), true)},
-    (LogicAtom('nonNegative'), true)
-  ),
+  ({(LogicAtom('negative'), false), (LogicAtom('real'), true)},
+    (LogicAtom('nonNegative'), true)),
+  ({(LogicAtom('extendedNonNegative'), true), (LogicAtom('finite'), true)},
+    (LogicAtom('nonNegative'), true)),
 
   // Rules implying LogicAtom('nonPositive') = true
-  (
-    {(LogicAtom('positive'), false), (LogicAtom('real'), true)},
-    (LogicAtom('nonPositive'), true)
-  ),
-  (
-    {(LogicAtom('extendedNonPositive'), true), (LogicAtom('finite'), true)},
-    (LogicAtom('nonPositive'), true)
-  ),
+  ({(LogicAtom('positive'), false), (LogicAtom('real'), true)},
+    (LogicAtom('nonPositive'), true)),
+  ({(LogicAtom('extendedNonPositive'), true), (LogicAtom('finite'), true)},
+    (LogicAtom('nonPositive'), true)),
 
   // Rules implying LogicAtom('nonzero') = true
-  (
-    {(LogicAtom('extendedNonzero'), true), (LogicAtom('finite'), true)},
-    (LogicAtom('nonzero'), true)
-  ),
+  ({(LogicAtom('extendedNonzero'), true), (LogicAtom('finite'), true)},
+    (LogicAtom('nonzero'), true)),
 
   // Rules implying LogicAtom('odd') = true
-  (
-    {(LogicAtom('even'), false), (LogicAtom('integer'), true)},
-    (LogicAtom('odd'), true)
-  ),
+  ({(LogicAtom('even'), false), (LogicAtom('integer'), true)},
+    (LogicAtom('odd'), true)),
 
   // Rules implying LogicAtom('positive') = false
-  (
-    {
-      (LogicAtom('composite'), false),
-      (LogicAtom('even'), true),
-      (LogicAtom('prime'), false)
-    },
-    (LogicAtom('positive'), false)
-  ),
+  ({(LogicAtom('composite'), false), (LogicAtom('even'), true), (LogicAtom('prime'), false)},
+    (LogicAtom('positive'), false)),
 
   // Rules implying LogicAtom('positive') = true
-  (
-    {
-      (LogicAtom('negative'), false),
-      (LogicAtom('real'), true),
-      (LogicAtom('zero'), false)
-    },
-    (LogicAtom('positive'), true)
-  ),
-  (
-    {(LogicAtom('nonNegative'), true), (LogicAtom('nonzero'), true)},
-    (LogicAtom('positive'), true)
-  ),
-  (
-    {(LogicAtom('extendedPositive'), true), (LogicAtom('finite'), true)},
-    (LogicAtom('positive'), true)
-  ),
+  ({(LogicAtom('negative'), false), (LogicAtom('real'), true), (LogicAtom('zero'), false)},
+    (LogicAtom('positive'), true)),
+  ({(LogicAtom('nonNegative'), true), (LogicAtom('nonzero'), true)},
+    (LogicAtom('positive'), true)),
+  ({(LogicAtom('extendedPositive'), true), (LogicAtom('finite'), true)},
+    (LogicAtom('positive'), true)),
 
   // Rules implying LogicAtom('prime') = true
-  (
-    {
-      (LogicAtom('composite'), false),
-      (LogicAtom('even'), true),
-      (LogicAtom('positive'), true)
-    },
-    (LogicAtom('prime'), true)
-  ),
+  ({(LogicAtom('composite'), false), (LogicAtom('even'), true), (LogicAtom('positive'), true)},
+    (LogicAtom('prime'), true)),
 
   // Rules implying LogicAtom('real') = false
-  (
-    {
-      (LogicAtom('negative'), false),
-      (LogicAtom('positive'), false),
-      (LogicAtom('zero'), false)
-    },
-    (LogicAtom('real'), false)
-  ),
+  ({(LogicAtom('negative'), false), (LogicAtom('positive'), false), (LogicAtom('zero'), false)},
+    (LogicAtom('real'), false)),
 
   // Rules implying LogicAtom('real') = true
-  (
-    {(LogicAtom('extendedReal'), true), (LogicAtom('infinite'), false)},
-    (LogicAtom('real'), true)
-  ),
-  (
-    {(LogicAtom('extendedReal'), true), (LogicAtom('finite'), true)},
-    (LogicAtom('real'), true)
-  ),
+  ({(LogicAtom('extendedReal'), true), (LogicAtom('infinite'), false)},
+    (LogicAtom('real'), true)),
+  ({(LogicAtom('extendedReal'), true), (LogicAtom('finite'), true)},
+    (LogicAtom('real'), true)),
 
   // Rules implying LogicAtom('transcendental') = true
-  (
-    {(LogicAtom('algebraic'), false), (LogicAtom('complex'), true)},
-    (LogicAtom('transcendental'), true)
-  ),
+  ({(LogicAtom('algebraic'), false), (LogicAtom('complex'), true)},
+    (LogicAtom('transcendental'), true)),
 
   // Rules implying LogicAtom('zero') = true
-  (
-    {
-      (LogicAtom('extendedNegative'), false),
-      (LogicAtom('extendedPositive'), false),
-      (LogicAtom('extendedReal'), true)
-    },
-    (LogicAtom('zero'), true)
-  ),
-  (
-    {
-      (LogicAtom('negative'), false),
-      (LogicAtom('positive'), false),
-      (LogicAtom('real'), true)
-    },
-    (LogicAtom('zero'), true)
-  ),
-  (
-    {
-      (LogicAtom('extendedNonNegative'), true),
-      (LogicAtom('extendedNonPositive'), true)
-    },
-    (LogicAtom('zero'), true)
-  ),
-  (
-    {(LogicAtom('nonNegative'), true), (LogicAtom('nonPositive'), true)},
-    (LogicAtom('zero'), true)
-  ),
+  ({(LogicAtom('extendedNegative'), false), (LogicAtom('extendedPositive'), false), (LogicAtom('extendedReal'), true)},
+    (LogicAtom('zero'), true)),
+  ({(LogicAtom('negative'), false), (LogicAtom('positive'), false), (LogicAtom('real'), true)},
+    (LogicAtom('zero'), true)),
+  ({(LogicAtom('extendedNonNegative'), true), (LogicAtom('extendedNonPositive'), true)},
+    (LogicAtom('zero'), true)),
+  ({(LogicAtom('nonNegative'), true), (LogicAtom('nonPositive'), true)},
+    (LogicAtom('zero'), true)),
+
 ]; // betaRules
 final betaTriggers = {
   (LogicAtom('algebraic'), false): <int>[32, 11, 3, 8, 29, 14, 25, 13, 17, 7],
@@ -1617,106 +1505,17 @@ final betaTriggers = {
   (LogicAtom('composite'), false): <int>[28, 24, 1],
   (LogicAtom('composite'), true): <int>[23, 2],
   (LogicAtom('even'), false): <int>[23, 11, 3, 8, 29, 14, 25, 7],
-  (LogicAtom('even'), true): <int>[
-    3,
-    33,
-    8,
-    6,
-    5,
-    14,
-    34,
-    25,
-    20,
-    18,
-    27,
-    16,
-    21,
-    19,
-    22,
-    0,
-    28,
-    24,
-    7
-  ],
+  (LogicAtom('even'), true): <int>[3, 33, 8, 6, 5, 14, 34, 25, 20, 18, 27, 16, 21, 19, 22, 0, 28, 24, 7],
   (LogicAtom('extendedNegative'), false): <int>[11, 33, 8, 5, 29, 34, 25, 18],
-  (LogicAtom('extendedNegative'), true): <int>[
-    30,
-    12,
-    31,
-    29,
-    14,
-    20,
-    16,
-    21,
-    22,
-    17
-  ],
+  (LogicAtom('extendedNegative'), true): <int>[30, 12, 31, 29, 14, 20, 16, 21, 22, 17],
   (LogicAtom('extendedNonNegative'), false): <int>[11, 3, 6, 29, 14, 20, 7],
-  (LogicAtom('extendedNonNegative'), true): <int>[
-    30,
-    12,
-    31,
-    33,
-    8,
-    9,
-    6,
-    29,
-    34,
-    25,
-    18,
-    19,
-    35,
-    17,
-    7
-  ],
+  (LogicAtom('extendedNonNegative'), true): <int>[30, 12, 31, 33, 8, 9, 6, 29, 34, 25, 18, 19, 35, 17, 7],
   (LogicAtom('extendedNonPositive'), false): <int>[11, 8, 5, 29, 25, 18, 7],
-  (LogicAtom('extendedNonPositive'), true): <int>[
-    30,
-    12,
-    31,
-    3,
-    33,
-    4,
-    5,
-    29,
-    14,
-    34,
-    20,
-    21,
-    35,
-    17,
-    7
-  ],
+  (LogicAtom('extendedNonPositive'), true): <int>[30, 12, 31, 3, 33, 4, 5, 29, 14, 34, 20, 21, 35, 17, 7],
   (LogicAtom('extendedNonzero'), false): <int>[11, 33, 6, 5, 29, 34, 20, 18],
-  (LogicAtom('extendedNonzero'), true): <int>[
-    30,
-    12,
-    31,
-    3,
-    8,
-    4,
-    9,
-    6,
-    5,
-    29,
-    14,
-    25,
-    22,
-    17
-  ],
+  (LogicAtom('extendedNonzero'), true): <int>[30, 12, 31, 3, 8, 4, 9, 6, 5, 29, 14, 25, 22, 17],
   (LogicAtom('extendedPositive'), false): <int>[11, 3, 33, 6, 29, 14, 34, 20],
-  (LogicAtom('extendedPositive'), true): <int>[
-    30,
-    12,
-    31,
-    29,
-    25,
-    18,
-    27,
-    19,
-    22,
-    17
-  ],
+  (LogicAtom('extendedPositive'), true): <int>[30, 12, 31, 29, 25, 18, 27, 19, 22, 17],
   (LogicAtom('extendedReal'), false): <int>[],
   (LogicAtom('extendedReal'), true): <int>[30, 12, 31, 3, 33, 8, 6, 5, 17, 7],
   (LogicAtom('finite'), false): <int>[11, 3, 8, 17, 7],
@@ -1726,216 +1525,37 @@ final betaTriggers = {
   (LogicAtom('infinite'), false): <int>[10, 30, 31, 27, 16, 21, 19, 22],
   (LogicAtom('infinite'), true): <int>[11, 3, 8, 17, 7],
   (LogicAtom('integer'), false): <int>[11, 3, 8, 29, 14, 25, 17, 7],
-  (LogicAtom('integer'), true): <int>[
-    23,
-    2,
-    3,
-    33,
-    8,
-    6,
-    5,
-    14,
-    34,
-    25,
-    20,
-    18,
-    27,
-    16,
-    21,
-    19,
-    22,
-    7
-  ],
-  (LogicAtom('irrational'), true): <int>[
-    32,
-    3,
-    8,
-    4,
-    9,
-    6,
-    5,
-    14,
-    25,
-    15,
-    26,
-    20,
-    18,
-    27,
-    16,
-    21,
-    19
-  ],
+  (LogicAtom('integer'), true): <int>[23, 2, 3, 33, 8, 6, 5, 14, 34, 25, 20, 18, 27, 16, 21, 19, 22, 7],
+  (LogicAtom('irrational'), true): <int>[32, 3, 8, 4, 9, 6, 5, 14, 25, 15, 26, 20, 18, 27, 16, 21, 19],
   (LogicAtom('negative'), false): <int>[29, 34, 25, 18],
   (LogicAtom('negative'), true): <int>[32, 13, 17],
-  (LogicAtom('nonInteger'), true): <int>[
-    30,
-    12,
-    31,
-    3,
-    8,
-    4,
-    9,
-    6,
-    5,
-    29,
-    14,
-    25,
-    22
-  ],
+  (LogicAtom('nonInteger'), true): <int>[30, 12, 31, 3, 8, 4, 9, 6, 5, 29, 14, 25, 22],
   (LogicAtom('nonNegative'), false): <int>[11, 3, 8, 29, 14, 20, 7],
-  (LogicAtom('nonNegative'), true): <int>[
-    32,
-    33,
-    8,
-    9,
-    6,
-    34,
-    25,
-    26,
-    20,
-    27,
-    21,
-    22,
-    35,
-    36,
-    13,
-    17,
-    7
-  ],
+  (LogicAtom('nonNegative'), true): <int>[32, 33, 8, 9, 6, 34, 25, 26, 20, 27, 21, 22, 35, 36, 13, 17, 7],
   (LogicAtom('nonPositive'), false): <int>[11, 3, 8, 29, 25, 18, 7],
-  (LogicAtom('nonPositive'), true): <int>[
-    32,
-    3,
-    33,
-    4,
-    5,
-    14,
-    34,
-    15,
-    18,
-    16,
-    19,
-    22,
-    35,
-    36,
-    13,
-    17,
-    7
-  ],
+  (LogicAtom('nonPositive'), true): <int>[32, 3, 33, 4, 5, 14, 34, 15, 18, 16, 19, 22, 35, 36, 13, 17, 7],
   (LogicAtom('nonzero'), false): <int>[29, 34, 20, 18],
-  (LogicAtom('nonzero'), true): <int>[
-    32,
-    3,
-    8,
-    4,
-    9,
-    6,
-    5,
-    14,
-    25,
-    15,
-    26,
-    20,
-    18,
-    27,
-    16,
-    21,
-    19,
-    13,
-    17
-  ],
+  (LogicAtom('nonzero'), true): <int>[32, 3, 8, 4, 9, 6, 5, 14, 25, 15, 26, 20, 18, 27, 16, 21, 19, 13, 17],
   (LogicAtom('odd'), false): <int>[2],
-  (LogicAtom('odd'), true): <int>[
-    3,
-    8,
-    4,
-    9,
-    6,
-    5,
-    14,
-    25,
-    15,
-    26,
-    20,
-    18,
-    27,
-    16,
-    21,
-    19
-  ],
+  (LogicAtom('odd'), true): <int>[3, 8, 4, 9, 6, 5, 14, 25, 15, 26, 20, 18, 27, 16, 21, 19],
   (LogicAtom('positive'), false): <int>[29, 14, 34, 20],
   (LogicAtom('positive'), true): <int>[32, 0, 28, 1, 13, 17],
   (LogicAtom('prime'), false): <int>[0, 24, 1],
   (LogicAtom('prime'), true): <int>[23, 2],
   (LogicAtom('rational'), false): <int>[11, 3, 8, 29, 14, 25, 13, 17, 7],
-  (LogicAtom('rational'), true): <int>[
-    3,
-    33,
-    8,
-    6,
-    5,
-    14,
-    34,
-    25,
-    20,
-    18,
-    27,
-    16,
-    21,
-    19,
-    22,
-    17,
-    7
-  ],
+  (LogicAtom('rational'), true): <int>[3, 33, 8, 6, 5, 14, 34, 25, 20, 18, 27, 16, 21, 19, 22, 17, 7],
   (LogicAtom('real'), false): <int>[10, 12, 11, 3, 8, 17, 7],
-  (LogicAtom('real'), true): <int>[
-    32,
-    3,
-    33,
-    8,
-    6,
-    5,
-    14,
-    34,
-    25,
-    20,
-    18,
-    27,
-    16,
-    21,
-    19,
-    22,
-    13,
-    17,
-    7
-  ],
-  (LogicAtom('transcendental'), true): <int>[
-    10,
-    30,
-    31,
-    11,
-    3,
-    8,
-    29,
-    14,
-    25,
-    27,
-    16,
-    21,
-    19,
-    22,
-    13,
-    17,
-    7
-  ],
+  (LogicAtom('real'), true): <int>[32, 3, 33, 8, 6, 5, 14, 34, 25, 20, 18, 27, 16, 21, 19, 22, 13, 17, 7],
+  (LogicAtom('transcendental'), true): <int>[10, 30, 31, 11, 3, 8, 29, 14, 25, 27, 16, 21, 19, 22, 13, 17, 7],
   (LogicAtom('zero'), false): <int>[11, 3, 8, 29, 14, 25, 7],
   (LogicAtom('zero'), true): <int>[],
 }; // betaTriggers
 
+
 final factRules = FactRules.pregenerated(
-  betaRules,
-  definedFacts.toSet(),
-  fullImplications,
-  betaTriggers,
-  prereq,
-);
+    betaRules,
+    definedFacts.toSet(),
+    fullImplications,
+    betaTriggers,
+    prereq,
+);  
